@@ -3581,21 +3581,6 @@ def musician_invite_page(request: Request):
     )
 
 
-@app.get("/librarian/conductor_invite_builder", response_class=HTMLResponse)
-def librarian_conductor_invite_builder(request: Request):
-    librarian_email = librarian_route_get_email_from_request(request) or "librarian@local"
-    conductor_email = str(request.query_params.get("conductor_email") or "").strip().lower()
-
-    if not conductor_email:
-        return RedirectResponse(f"/librarian?email={quote_plus(librarian_email)}", status_code=303)
-
-    host = annotatio_invite_host_base_url(request)
-    return RedirectResponse(
-        f"/conductor/invite?email={quote_plus(conductor_email)}&host={quote_plus(host)}",
-        status_code=303,
-    )
-
-
 @app.get("/librarian", response_class=HTMLResponse)
 def librarian_home_page(request: Request):
     librarian_file = TEMPLATES_DIR / "librarian.html"
