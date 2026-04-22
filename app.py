@@ -51,6 +51,29 @@ def annotatio_repo_bootstrap_files():
 annotatio_repo_bootstrap_files()
 
 templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
+
+annotatio_original_template_response = templates.TemplateResponse
+
+def annotatio_template_response_compat(
+    name,
+    context,
+    status_code=200,
+    headers=None,
+    media_type=None,
+    background=None,
+):
+    return annotatio_original_template_response(
+        context["request"],
+        name,
+        context,
+        status_code=status_code,
+        headers=headers,
+        media_type=media_type,
+        background=background,
+    )
+
+templates.TemplateResponse = annotatio_template_response_compat
+
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
 # =====================================================================
