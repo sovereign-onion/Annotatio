@@ -579,22 +579,6 @@ tr:last-child td{
         </div>
       </div>
 
-      <div class="panel">
-        <h2>Conductor Invite</h2>
-
-        <div class="helper-note" style="margin-bottom:14px;">
-          Enter the conductor email once. Annotatio will open the finished Conductor invite page with the real front-door link ready to copy into your own email.
-        </div>
-
-        <form method="get" action="/librarian/conductor_invite_builder">
-          <input type="hidden" name="email" value="{{ user.email }}">
-          <div class="search-row">
-            <input type="text" name="conductor_email" placeholder="conductor@email.com" required>
-            <button class="btn" type="submit">Open Conductor Invite</button>
-          </div>
-        </form>
-      </div>
-
 <div class="panel">
   <h2>Conductor Upload Alerts</h2>
 
