@@ -1,0 +1,785 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Annotatio — Ensemble Roster</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root{
+      --bg:#071018;
+      --card:#0b1622;
+      --panel:#101e2d;
+      --line:#223548;
+      --line-soft:#31455c;
+      --gold:#b89457;
+      --text:#f2f0ea;
+      --muted:#c8d0d8;
+      --blue:#74d3de;
+      --green:#3d8d57;
+      --amber:#b89457;
+      --red:#9f4343;
+    }
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Georgia, "Times New Roman", serif;
+}
+
+a{
+  color:var(--blue);
+  text-decoration:none;
+}
+
+a:hover{
+  text-decoration:underline;
+}
+
+.wrap{
+  max-width:1240px;
+  margin:18px auto 40px auto;
+  padding:0 18px;
+}
+
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:14px;
+  overflow:hidden;
+  box-shadow:0 10px 30px rgba(0,0,0,0.28);
+}
+
+.top{
+  text-align:center;
+  padding:16px 22px 6px 22px;
+}
+
+.top img{
+  display:block;
+  margin:0 auto;
+  width:460px;
+  max-width:86%;
+  height:auto;
+  border:0;
+}
+
+.rule{
+  height:1px;
+  width:190px;
+  background:var(--gold);
+  margin:6px auto 14px auto;
+}
+
+.content{
+  padding:18px 26px 30px 26px;
+}
+
+h1{
+  margin:0 0 8px 0;
+  text-align:center;
+  color:var(--blue);
+  font-size:31px;
+  line-height:1.2;
+}
+
+.sub{
+  text-align:center;
+  font-size:16px;
+  line-height:1.7;
+  color:var(--muted);
+  margin-bottom:10px;
+}
+
+.toplinks{
+  text-align:center;
+  font-size:15px;
+  color:var(--muted);
+  margin-bottom:24px;
+}
+
+.toplinks a{
+  margin:0 8px;
+}
+
+.intro-box{
+  margin:0 0 24px 0;
+  padding:18px 20px;
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:12px;
+  font-size:17px;
+  line-height:1.7;
+  color:var(--text);
+}
+
+.summary-grid{
+  display:grid;
+  grid-template-columns:repeat(4, 1fr);
+  gap:16px;
+  margin-bottom:24px;
+}
+
+.summary-card{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:18px 16px;
+}
+
+.summary-label{
+  font-size:14px;
+  color:var(--muted);
+  margin-bottom:8px;
+}
+
+.summary-value{
+  font-size:28px;
+  color:var(--text);
+  line-height:1.1;
+  margin-bottom:8px;
+}
+
+.summary-note{
+  font-size:14px;
+  color:var(--muted);
+  line-height:1.5;
+}
+
+.toolbar{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:18px;
+  padding:16px 18px;
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:12px;
+}
+
+.toolbar-left,
+.toolbar-right{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+
+.pill{
+  display:inline-block;
+  min-width:58px;
+  padding:5px 10px;
+  border-radius:999px;
+  border:1px solid var(--line-soft);
+  background:#0b1622;
+  font-size:13px;
+  line-height:1.2;
+  color:var(--text);
+  white-space:nowrap;
+  text-align:center;
+}
+
+.btn{
+  display:inline-block;
+  padding:10px 16px;
+  border-radius:999px;
+  border:1px solid var(--gold);
+  background:linear-gradient(to bottom, #173247, #102435);
+  color:var(--text);
+  text-decoration:none;
+  font-size:15px;
+  cursor:pointer;
+}
+
+.btn.secondary{
+  border-color:var(--line-soft);
+  background:#0d1927;
+}
+
+.search{
+  min-width:260px;
+  padding:11px 13px;
+  border-radius:10px;
+  border:1px solid var(--line-soft);
+  background:#0d1927;
+  color:var(--text);
+  font-size:15px;
+}
+
+.panel{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:20px;
+  margin-bottom:18px;
+}
+
+.panel h2{
+  margin:0 0 14px 0;
+  color:var(--blue);
+  font-size:24px;
+  line-height:1.3;
+}
+
+.table-wrap{
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  table-layout:fixed;
+}
+
+th, td{
+  text-align:left;
+  vertical-align:top;
+  padding:12px 10px;
+  border-bottom:1px solid var(--line-soft);
+  font-size:15px;
+  line-height:1.45;
+}
+
+th{
+  color:#e5dccb;
+  font-size:14px;
+  letter-spacing:0.02em;
+  background:#0d1927;
+  white-space:nowrap;
+}
+
+tr:last-child td{
+  border-bottom:none;
+}
+
+tr.group-row td{
+  background:#0d1927;
+  color:#f6f1e8;
+  font-weight:700;
+  border-top:1px solid var(--gold);
+  border-bottom:1px solid var(--line-soft);
+}
+
+tr.member-row:hover td{
+  background:rgba(255,255,255,0.03);
+}
+
+.name{
+  font-size:16px;
+  color:var(--text);
+  margin-bottom:4px;
+}
+
+.meta{
+  color:var(--muted);
+  font-size:14px;
+}
+
+.empty{
+  padding:20px;
+  border:1px dashed var(--line-soft);
+  border-radius:12px;
+  color:var(--muted);
+  background:#0d1927;
+}
+
+.footnote{
+  margin-top:12px;
+  font-size:14px;
+  line-height:1.6;
+  color:var(--muted);
+}
+
+@media (max-width: 980px){
+  .summary-grid{
+    grid-template-columns:1fr 1fr;
+  }
+
+  table{
+    min-width:900px;
+  }
+}
+
+@media (max-width: 640px){
+  .summary-grid{
+    grid-template-columns:1fr;
+  }
+
+  .content{
+    padding:20px 18px 28px 18px;
+  }
+
+  h1{
+    font-size:28px;
+  }
+}
+
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="top">
+        <img src="/static/annotatio_logo.png" alt="Annotatio">
+      </div>
+
+      <div class="rule"></div>
+
+      <div class="content">
+        <h1>Ensemble Roster</h1>
+
+        <div class="sub">
+          Review the current ensemble roster and track musicians already attached to your organisation structure.
+        </div>
+
+        <div class="toplinks">
+          <a href="/librarian" class="btn">Return to Librarian Hub</a>
+        </div>
+
+        <div class="intro-box">
+          Create one ensemble at a time, issue invitations, and let acceptance attach musicians automatically into the new ensemble without duplicating users or removing them from any existing ensemble.
+        </div>
+
+        {% if msg %}
+<div class="intro-box" style="border-color:#31455c; background:#0d1927; margin-top:-8px; display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
+
+  <div style="font-size:16px;">
+    {{ msg }}
+  </div>
+
+  <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+
+    <div class="pill">Started / Completed</div>
+
+    <div class="pill">Invited</div>
+
+    <div class="pill">Accepted</div>
+
+    <div class="pill">Declined</div>
+
+    <button class="btn">Mark Complete</button>
+
+  </div>
+
+</div>
+{% endif %}
+
+        <div class="summary-grid">
+          <a href="/librarian?view=roster_total" style="text-decoration:none;">
+            <div class="summary-card">
+              <div class="summary-label">Total roster entries</div>
+              <div class="summary-value">{{ rows|length }}</div>
+              <div class="summary-note">All musicians currently attached to saved ensemble rosters.</div>
+            </div>
+          </a>
+
+          <a href="/librarian?view=roster_named" style="text-decoration:none;">
+            <div class="summary-card">
+              <div class="summary-label">Named musicians</div>
+              <div class="summary-value">{{ rows|selectattr('musician_name')|list|length }}</div>
+              <div class="summary-note">Roster entries with a visible musician record attached.</div>
+            </div>
+          </a>
+
+          <a href="/librarian?view=roster_roles" style="text-decoration:none;">
+            <div class="summary-card">
+              <div class="summary-label">Role titles</div>
+              <div class="summary-value">{{ rows|selectattr('role_title')|list|length }}</div>
+              <div class="summary-note">Roster entries carrying a chair title or section role.</div>
+            </div>
+          </a>
+
+          <a href="/librarian?view=roster_ensembles" style="text-decoration:none;">
+            <div class="summary-card">
+              <div class="summary-label">Ensembles</div>
+              <div class="summary-value">{{ rows|groupby('ensemble_name')|list|length }}</div>
+              <div class="summary-note">Saved ensemble groups currently visible in this organisation.</div>
+            </div>
+          </a>
+        </div>
+
+        <div class="panel" style="margin-bottom:18px;">
+          <h2>Create ensemble</h2>
+          <form method="post" action="/librarian/ensemble/create" style="display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end;">
+            <div style="flex:1 1 420px; position:relative;">
+              <label for="ensemble_name" style="display:block; margin-bottom:6px; color:#c8d0d8; font-size:14px;">Ensemble name</label>
+              <input class="search" id="ensemble_name" name="ensemble_name" type="text" placeholder="Create one new ensemble at a time" required style="width:100%;" autocomplete="off">
+              <div id="ensemble-autofill" style="display:none; position:absolute; top:100%; left:0; right:0; margin-top:4px; border:1px solid var(--line-soft); border-radius:10px; background:#0d1927; overflow:hidden; z-index:40; box-shadow:0 10px 30px rgba(0,0,0,0.28);"></div>
+            </div>
+            <div>
+              <button class="btn" type="submit">Create Ensemble</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="panel" style="margin-bottom:18px;">
+          <h2>Issue invites</h2>
+          <form method="post" action="/librarian/ensemble/invite">
+            <div style="display:grid; grid-template-columns:1.1fr 1fr 1fr; gap:12px; margin-bottom:14px;">
+                <input type="hidden" id="ensemble_id" name="ensemble_id" value="{{ selected_ensemble_id or '' }}">
+            </div>
+
+<div class="toolbar" style="margin-bottom:10px;">
+  <div class="toolbar-left" style="flex:1 1 auto;">
+    <input
+      type="text"
+      id="rosterSearch"
+      class="search"
+      placeholder="Search ensemble, musician, email, instrument, role"
+      style="flex:0 1 320px;"
+    >
+    <button class="btn" type="submit">Send Invite</button>
+  </div>
+  <div class="toolbar-right">
+    <span class="pill">Create one ensemble at a time</span>
+    <span class="pill">Grey = invited</span>
+    <span class="pill">Green = accepted</span>
+    <span class="pill">Red = declined</span>
+  </div>
+</div>
+
+            <div class="table-wrap">
+              <table class="filter-table">
+                <thead>
+                  <tr>
+                    <th style="width:7%;">Invite</th>
+                    <th style="width:24%;">Musician</th>
+                    <th style="width:22%;">Email</th>
+                    <th style="width:18%;">Primary</th>
+                    <th style="width:29%;">Current Ensembles</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for musician in musicians %}
+                  <tr class="member-row"
+                      data-search="{{ (musician.name or '')|lower }} {{ (musician.email or '')|lower }} {{ (musician.primary_instrument or '')|lower }} {{ (musician.musician_ensembles or '')|lower }}">
+                    <td><input type="checkbox" name="musician_user_ids" value="{{ musician.id }}"></td>
+                    <td>
+                      <div class="name">{{ musician.name or 'Unnamed musician' }}</div>
+                      <div class="meta">User ID {{ musician.id }}</div>
+                    </td>
+                    <td>{{ musician.email or '—' }}</td>
+                    <td>{{ musician.primary_instrument or '—' }}</td>
+                    <td>{{ musician.musician_ensembles or '—' }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+
+            <div style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+              <a href="/musician/ensemble_invites" class="btn secondary">Musician Invite Page</a>
+            </div>
+          </form>
+        </div>
+
+        <div class="panel">
+          <h2>Invite states</h2>
+
+          {% if invites and invites|length > 0 %}
+          <div class="table-wrap">
+            <table class="filter-table">
+              <thead>
+                <tr>
+                  <th style="width:21%;">Ensemble</th>
+                  <th style="width:21%;">Musician</th>
+                  <th style="width:22%;">Email</th>
+                  <th style="width:12%;">Seat</th>
+                  <th style="width:12%;">Role</th>
+                  <th style="width:12%;">State</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for invite in invites %}
+                <tr class="member-row"
+                    data-search="{{ (invite.ensemble_name or '')|lower }} {{ (invite.musician_name or '')|lower }} {{ (invite.musician_email or '')|lower }} {{ (invite.instrument or '')|lower }} {{ (invite.role_title or '')|lower }} {{ (invite.status or '')|lower }}">
+                  <td>{{ invite.ensemble_name }}</td>
+                  <td>{{ invite.musician_name or '—' }}</td>
+                  <td>{{ invite.musician_email or '—' }}</td>
+                  <td>{{ invite.instrument or '—' }}</td>
+                  <td>{{ invite.role_title or '—' }}</td>
+                  <td>
+                    {% if invite.status == 'accepted' %}
+                      <span class="pill" style="border-color:#3d8d57; color:#f2f0ea; background:rgba(61,141,87,0.18);">Green</span>
+                    {% elif invite.status == 'declined' %}
+                      <span class="pill" style="border-color:#9f4343; color:#f2f0ea; background:rgba(159,67,67,0.18);">Red</span>
+                    {% else %}
+                      <span class="pill" style="border-color:#5f6b78; color:#f2f0ea; background:rgba(95,107,120,0.18);">Grey</span>
+                    {% endif %}
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <div class="empty">
+            No ensemble invites issued yet.
+          </div>
+          {% endif %}
+        </div>
+
+        <div class="panel">
+          <h2>Active ensemble players</h2>
+
+          {% if rows and rows|length > 0 %}
+          <div class="table-wrap">
+            <table id="rosterTable" class="filter-table">
+              <thead>
+                <tr>
+                  <th style="width:17%;">Instrument</th>
+                  <th style="width:29%;">Musician</th>
+                  <th style="width:24%;">Email</th>
+                  <th style="width:18%;">Role / Chair</th>
+                  <th style="width:12%;">Roster ID</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for group in rows|groupby('ensemble_name') %}
+                <tr class="group-row" data-group="{{ group.grouper|lower }}">
+                  <td colspan="5">{{ group.grouper }} · {{ group.list|length }} player{% if group.list|length != 1 %}s{% endif %}</td>
+                </tr>
+
+                {% for row in group.list %}
+                <tr class="member-row"
+                    data-search="{{ (row.ensemble_name or '')|lower }} {{ (row.instrument or '')|lower }} {{ (row.musician_name or '')|lower }} {{ (row.musician_email or '')|lower }} {{ (row.role_title or '')|lower }}">
+                  <td>{{ row.instrument or '—' }}</td>
+                  <td>
+                    <div class="name">{{ row.musician_name or 'Unlinked musician' }}</div>
+                    <div class="meta">
+                      {% if row.musician_user_id %}User ID {{ row.musician_user_id }}{% else %}No user linked{% endif %}
+                    </div>
+                  </td>
+                  <td>{{ row.musician_email or '—' }}</td>
+                  <td>{{ row.role_title or '—' }}</td>
+                  <td>{{ row.roster_id }}</td>
+                </tr>
+                {% endfor %}
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <div class="empty">
+            No ensemble roster entries exist yet for this organisation.
+          </div>
+          {% endif %}
+
+          <div class="footnote">
+            Accepted invites create links into the new ensemble roster only. Existing ensemble links remain intact and no musician user is duplicated.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      const search = document.getElementById('rosterSearch');
+      const tables = Array.from(document.querySelectorAll('.filter-table'));
+      if (search && tables.length) {
+        function applyFilter(){
+          const q = (search.value || '').trim().toLowerCase();
+
+          tables.forEach(table => {
+            const groupRows = Array.from(table.querySelectorAll('.group-row'));
+            const memberRows = Array.from(table.querySelectorAll('.member-row'));
+
+            memberRows.forEach(row => {
+              const hay = row.dataset.search || '';
+              row.style.display = !q || hay.includes(q) ? '' : 'none';
+            });
+
+            groupRows.forEach(groupRow => {
+              let next = groupRow.nextElementSibling;
+              let anyVisible = false;
+
+              while (next && !next.classList.contains('group-row')) {
+                if (next.classList.contains('member-row') && next.style.display !== 'none') {
+                  anyVisible = true;
+                }
+                next = next.nextElementSibling;
+              }
+
+              groupRow.style.display = anyVisible || !q ? '' : 'none';
+            });
+          });
+        }
+
+        search.addEventListener('input', applyFilter);
+        applyFilter();
+      }
+
+      const ensembleInput = document.getElementById('ensemble_name');
+      const ensembleAutofill = document.getElementById('ensemble-autofill');
+      const issueEnsembleInput = document.getElementById('ensemble_id_search');
+      const issueEnsembleHidden = document.getElementById('ensemble_id');
+      const issueEnsembleAutofill = document.getElementById('issue-ensemble-autofill');
+      const ensembleOptions = [
+{% for ensemble in ensembles %}
+  [{{ ensemble.id | tojson }}, {{ ensemble.name | tojson }}]{% if not loop.last %},{% endif %}
+{% endfor %}
+];      const ensembleOptionsRows = ensembleOptions.map(function(row){
+        return {
+          id: String(row[0] || ''),
+          name: String(row[1] || '')
+        };
+      });
+
+      function escHtml(value){
+        return String(value || '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
+      function wireEnsembleAutofill(inputEl, hiddenEl, boxEl){
+        if (!inputEl || !boxEl) return;
+
+        let activeIndex = -1;
+
+        function hideBox(){
+          boxEl.style.display = 'none';
+          boxEl.innerHTML = '';
+          activeIndex = -1;
+        }
+
+        function getItems(){
+          return Array.from(boxEl.querySelectorAll('.ensemble-autofill-item'));
+        }
+
+        function setActive(index){
+          const items = getItems();
+          if (!items.length) {
+            activeIndex = -1;
+            return;
+          }
+
+          if (index < 0) index = items.length - 1;
+          if (index >= items.length) index = 0;
+
+          activeIndex = index;
+
+          items.forEach((item, i) => {
+            if (i === activeIndex) {
+              item.style.background = '#173247';
+              item.style.color = '#f2f0ea';
+            } else {
+              item.style.background = '#0d1927';
+              item.style.color = '#aeb7c2';
+            }
+          });
+        }
+
+        function chooseItem(item){
+          if (!item) return;
+          inputEl.value = item.getAttribute('data-name') || '';
+          if (hiddenEl) {
+            hiddenEl.value = item.getAttribute('data-id') || '';
+          }
+          hideBox();
+        }
+
+        function renderMatches(){
+          const q = (inputEl.value || '').trim().toLowerCase();
+
+          if (!q) {
+            hideBox();
+            return;
+          }
+
+          const matches = ensembleOptionsRows
+            .filter(row => String(row.name || '').toLowerCase().includes(q))
+            .slice(0, 12);
+
+          if (!matches.length) {
+            hideBox();
+            return;
+          }
+
+          boxEl.innerHTML = matches.map(row => `
+            <button
+              type="button"
+              class="ensemble-autofill-item"
+              data-id="${escHtml(row.id)}"
+              data-name="${escHtml(row.name)}"
+              style="display:block; width:100%; text-align:left; padding:11px 13px; border:0; border-bottom:1px solid var(--line-soft); background:#0d1927; color:#aeb7c2; font-size:15px; cursor:pointer;"
+            >${escHtml(row.name)}</button>
+          `).join('');
+
+          boxEl.style.display = 'block';
+          setActive(0);
+        }
+
+        inputEl.addEventListener('input', function(){
+          if (hiddenEl) {
+            hiddenEl.value = '';
+          }
+          renderMatches();
+        });
+
+        inputEl.addEventListener('keydown', function(e){
+          const items = getItems();
+          const isOpen = boxEl.style.display !== 'none' && items.length > 0;
+
+          if (e.key === 'ArrowDown') {
+            if (!isOpen) {
+              renderMatches();
+            } else {
+              setActive(activeIndex + 1);
+            }
+            e.preventDefault();
+            return;
+          }
+
+          if (e.key === 'ArrowUp') {
+            if (isOpen) {
+              setActive(activeIndex - 1);
+              e.preventDefault();
+            }
+            return;
+          }
+
+          if (e.key === 'Enter') {
+            if (isOpen && activeIndex >= 0 && items[activeIndex]) {
+              chooseItem(items[activeIndex]);
+              e.preventDefault();
+            }
+            return;
+          }
+
+          if (e.key === 'Escape') {
+            if (isOpen) {
+              hideBox();
+              e.preventDefault();
+            }
+          }
+        });
+
+        boxEl.addEventListener('click', function(e){
+          const btn = e.target.closest('.ensemble-autofill-item');
+          if (!btn) return;
+          chooseItem(btn);
+        });
+
+        document.addEventListener('click', function(e){
+          if (!boxEl.contains(e.target) && e.target !== inputEl) {
+            hideBox();
+          }
+        });
+      }
+
+      wireEnsembleAutofill(ensembleInput, null, ensembleAutofill);
+      wireEnsembleAutofill(issueEnsembleInput, issueEnsembleHidden, issueEnsembleAutofill);
+    })();
+  </script>
+
+</body>
+</html>

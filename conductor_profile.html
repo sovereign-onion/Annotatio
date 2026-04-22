@@ -1,0 +1,345 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Annotatio • Conductor Global Profile</title>
+
+<style>
+body{
+    margin:0;
+    font-family: Georgia, "Times New Roman", serif;
+    background:#071018;
+    color:#f2f0ea;
+}
+
+.page{
+    max-width:980px;
+    margin:40px auto;
+    padding:20px;
+}
+
+.card{
+    background:#0b1622;
+    border:1px solid #223548;
+    border-radius:14px;
+    padding:44px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.35);
+}
+
+.header{
+    text-align:center;
+    margin-bottom:30px;
+}
+
+.header img{
+    width:420px;
+    max-width:80%;
+}
+
+.name{
+    font-size:34px;
+    margin-top:10px;
+    color:#74d3de;
+}
+
+.roleline{
+    font-size:20px;
+    color:#d5b06a;
+}
+
+.rule{
+    height:1px;
+    width:220px;
+    background:#b89457;
+    margin:18px auto 10px auto;
+}
+
+.top-actions{
+    margin-top:16px;
+    display:flex;
+    justify-content:center;
+    gap:12px;
+    flex-wrap:wrap;
+}
+
+.section{
+    margin-top:30px;
+}
+
+.section-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    margin-bottom:10px;
+    flex-wrap:wrap;
+}
+
+.section-title{
+    font-size:22px;
+    color:#74d3de;
+    margin:0;
+}
+
+.info-box{
+    background:#081423;
+    border:1px solid #2d4257;
+    border-radius:10px;
+    padding:18px 22px;
+}
+
+.tag{
+    display:inline-block;
+    padding:6px 12px;
+    border:1px solid #2d4257;
+    border-radius:20px;
+    margin:6px 6px 0 0;
+    background:#0d1b2b;
+}
+
+.action-button{
+    display:inline-block;
+    padding:8px 16px;
+    background:#173247;
+    border:1px solid #b89457;
+    border-radius:999px;
+    text-decoration:none;
+    color:#f2f0ea;
+}
+
+.details-grid{
+    display:grid;
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+    gap:18px 20px;
+}
+
+.detail-item{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+}
+
+.detail-item.full{
+    grid-column:1 / -1;
+}
+
+.detail-label{
+    color:#d5b06a;
+    font-size:15px;
+}
+
+.detail-value{
+    min-height:24px;
+    padding:12px 14px;
+    font-size:16px;
+    color:#f2f0ea;
+    background:#0d1b2b;
+    border:1px solid #2d4257;
+    border-radius:10px;
+    line-height:1.5;
+    box-sizing:border-box;
+    white-space:pre-wrap;
+}
+
+.notice{
+    margin:0 0 20px 0;
+    padding:12px 16px;
+    border:1px solid #4b8f63;
+    background:#0d1b2b;
+    border-radius:10px;
+    color:#d8f1df;
+}
+</style>
+</head>
+
+<body>
+
+<div class="page">
+<div class="card">
+
+<div class="header">
+
+<div style="font-size:12px; letter-spacing:0.2em; color:#d5b06a; margin-bottom:10px;">
+CONDUCTOR
+</div>
+
+<img src="/static/annotatio_logo.png">
+
+<div class="name">{{ conductor.preferred_name or conductor.name }}</div>
+
+<div class="roleline">
+    Global Conductor Profile
+    {% if conductor.city %}
+        • {{ conductor.city }}
+    {% endif %}
+    {% if conductor.country_name %}
+        • {{ conductor.country_name }}
+    {% endif %}
+</div>
+
+<div class="rule"></div>
+
+<div class="top-actions">
+<a class="action-button" href="/conductor">Back to Conductor Hub</a>
+</div>
+
+</div>
+
+{% if request.query_params.get("saved") == "1" %}
+<div class="notice">Profile saved.</div>
+{% endif %}
+
+<div class="section">
+
+<div class="section-head">
+<h2 class="section-title" style="font-size:28px; color:#d5b06a;">World Global Profile</h2>
+</div>
+
+<div class="info-box" style="border:1px solid #b89457; box-shadow:0 0 0 1px rgba(184,148,87,0.18) inset;">
+{% if profile.working_area %}
+  <span class="tag">{{ profile.working_area }}</span>
+{% endif %}
+{% if profile.career_stage %}
+  <span class="tag">{{ profile.career_stage }}</span>
+{% endif %}
+{% if conductor.city %}
+  <span class="tag">{{ conductor.city }}</span>
+{% endif %}
+{% if conductor.state_region_territory %}
+  <span class="tag">{{ conductor.state_region_territory }}</span>
+{% endif %}
+{% if conductor.country_name %}
+  <span class="tag">{{ conductor.country_name }}</span>
+{% endif %}
+{% if profile.work_email %}
+  <span class="tag">{{ profile.work_email }}</span>
+{% endif %}
+{% if not profile.working_area and not profile.career_stage and not conductor.city and not conductor.state_region_territory and not conductor.country_name and not profile.work_email %}
+  <span class="tag">None listed</span>
+{% endif %}
+
+{% if profile.known_for %}
+<div style="margin-top:14px;">
+<div class="detail-label" style="margin-bottom:8px;">Known for</div>
+<div class="detail-value">{{ profile.known_for }}</div>
+</div>
+{% endif %}
+
+{% if conductor.notes %}
+<div style="margin-top:14px;">
+<div class="detail-label" style="margin-bottom:8px;">Professional notes</div>
+<div class="detail-value">{{ conductor.notes }}</div>
+</div>
+{% endif %}
+</div>
+
+</div>
+
+<div class="section">
+
+<div class="section-head">
+<h2 class="section-title">Personal Details</h2>
+</div>
+
+<div class="info-box">
+<div class="details-grid">
+
+<div class="detail-item">
+<div class="detail-label">Full name</div>
+<div class="detail-value">{{ conductor.name or "—" }}</div>
+</div>
+
+<div class="detail-item">
+<div class="detail-label">Preferred name</div>
+<div class="detail-value">{{ conductor.preferred_name or "—" }}</div>
+</div>
+
+<div class="detail-item">
+<div class="detail-label">Email</div>
+<div class="detail-value">{{ conductor.email or user.email or "—" }}</div>
+</div>
+
+<div class="detail-item">
+<div class="detail-label">Mobile</div>
+<div class="detail-value">{{ conductor.mobile or "—" }}</div>
+</div>
+
+<div class="detail-item">
+<div class="detail-label">City</div>
+<div class="detail-value">{{ conductor.city or "—" }}</div>
+</div>
+
+<div class="detail-item">
+<div class="detail-label">State / Region / Territory</div>
+<div class="detail-value">{{ conductor.state_region_territory or "—" }}</div>
+</div>
+
+<div class="detail-item">
+<div class="detail-label">Country</div>
+<div class="detail-value">{{ conductor.country_name or "—" }}</div>
+</div>
+
+<div class="detail-item">
+<div class="detail-label">Visible in global search</div>
+<div class="detail-value">{{ profile.global_search_visible or "Yes" }}</div>
+</div>
+
+<div class="detail-item full">
+<div class="detail-label">Notes for the librarian / production office</div>
+<div class="detail-value">{{ conductor.notes or "—" }}</div>
+</div>
+
+</div>
+</div>
+
+</div>
+
+<div class="section">
+
+<div class="section-head">
+<h2 class="section-title">Professional Profile</h2>
+</div>
+
+<div class="info-box">
+<div class="details-grid">
+
+<div class="detail-item">
+<div class="detail-label">Primary working area</div>
+<div class="detail-value">{{ profile.working_area or "—" }}</div>
+</div>
+
+<div class="detail-item">
+<div class="detail-label">Profile type</div>
+<div class="detail-value">{{ profile.career_stage or "—" }}</div>
+</div>
+
+<div class="detail-item full">
+<div class="detail-label">Production environments</div>
+<div class="detail-value">{{ profile.production_types or "—" }}</div>
+</div>
+
+<div class="detail-item full">
+<div class="detail-label">Known for</div>
+<div class="detail-value">{{ profile.known_for or "—" }}</div>
+</div>
+
+<div class="detail-item">
+<div class="detail-label">Work email</div>
+<div class="detail-value">{{ profile.work_email or conductor.email or "—" }}</div>
+</div>
+
+<div class="detail-item">
+<div class="detail-label">Role</div>
+<div class="detail-value">{{ conductor.primary_instrument or "Conductor" }}</div>
+</div>
+
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</body>
+</html>

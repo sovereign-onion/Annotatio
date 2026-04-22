@@ -1,0 +1,497 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Annotatio • Musician Hub</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+:root{
+    --bg:#071018;
+    --card:#0b1622;
+    --panel:#101e2d;
+    --panel-soft:#0d1927;
+    --line:#223548;
+    --line-soft:#31455c;
+    --gold:#b89457;
+    --text:#f2f0ea;
+    --muted:#c8d0d8;
+    --blue:#74d3de;
+    --green:#3d8d57;
+    --amber:#b89457;
+    --red:#9f4343;
+}
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    font-family:Georgia, "Times New Roman", serif;
+    background:var(--bg);
+    color:var(--text);
+}
+
+.page{
+    max-width:1240px;
+    margin:24px auto 40px auto;
+    padding:0 20px;
+}
+
+.card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:40px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.35);
+}
+
+.header{
+    text-align:center;
+    margin-bottom:28px;
+}
+
+.header img{
+    width:420px;
+    max-width:82%;
+}
+
+.title{
+    font-size:34px;
+    color:var(--blue);
+    margin-top:12px;
+}
+
+.subtitle{
+    color:var(--muted);
+    margin-top:8px;
+    font-size:18px;
+}
+
+.rule{
+    height:1px;
+    width:220px;
+    background:var(--gold);
+    margin:18px auto 10px auto;
+}
+
+.action-row{
+    display:flex;
+    justify-content:center;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-top:18px;
+}
+
+.action-link{
+    display:inline-block;
+    padding:9px 16px;
+    background:#173247;
+    color:var(--text);
+    text-decoration:none;
+    border:1px solid var(--gold);
+    border-radius:999px;
+    font-size:15px;
+}
+
+.action-link:hover{
+    background:#1c3a52;
+}
+
+.section{
+    margin-top:28px;
+}
+
+.section h3{
+    margin:0 0 12px 0;
+    font-size:24px;
+    color:var(--blue);
+}
+
+.intro{
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:18px;
+    background:var(--panel);
+    color:var(--muted);
+    line-height:1.75;
+}
+
+.concert-list{
+    display:grid;
+    gap:18px;
+}
+
+.concert-card{
+    border:1px solid var(--line);
+    border-radius:14px;
+    background:var(--panel);
+    overflow:hidden;
+}
+
+.concert-head{
+    display:flex;
+    justify-content:space-between;
+    gap:18px;
+    align-items:flex-start;
+    padding:18px 20px;
+    border-bottom:1px solid var(--line);
+    background:var(--panel-soft);
+}
+
+.concert-title{
+    font-size:26px;
+    color:var(--blue);
+    margin:0 0 6px 0;
+}
+
+.concert-sub{
+    font-size:16px;
+    color:var(--muted);
+    line-height:1.7;
+}
+
+.seal{
+    min-width:120px;
+    text-align:center;
+    padding:10px 14px;
+    border-radius:999px;
+    border:1px solid var(--line-soft);
+    font-size:15px;
+    color:var(--text);
+}
+
+.seal.green{
+    background:rgba(61,141,87,0.18);
+    border-color:#4b8f63;
+}
+
+.seal.amber{
+    background:rgba(184,148,87,0.18);
+    border-color:var(--gold);
+}
+
+.seal.red{
+    background:rgba(159,67,67,0.18);
+    border-color:#b15a5a;
+}
+
+.concert-body{
+    padding:20px;
+}
+
+.meta-grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:12px;
+    margin-bottom:18px;
+}
+
+.meta-box{
+    border:1px solid var(--line-soft);
+    border-radius:12px;
+    background:#0b1622;
+    padding:14px 16px;
+}
+
+.meta-label{
+    font-size:13px;
+    color:var(--muted);
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    margin-bottom:6px;
+}
+
+.meta-value{
+    font-size:16px;
+    color:var(--text);
+    line-height:1.6;
+}
+
+.response-panel{
+    margin-top:4px;
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:18px;
+    background:#0d1b2b;
+}
+
+.response-label{
+    display:block;
+    margin:0 0 8px 0;
+    font-size:16px;
+    color:#d5b06a;
+}
+
+.response-textarea{
+    width:100%;
+    box-sizing:border-box;
+    min-height:110px;
+    padding:12px 14px;
+    border:1px solid #2d4257;
+    border-radius:10px;
+    background:#0b1622;
+    color:var(--text);
+    font-family:Georgia, "Times New Roman", serif;
+    font-size:16px;
+    resize:vertical;
+}
+
+.response-help{
+    margin-top:8px;
+    color:#aeb7c2;
+    font-size:14px;
+    line-height:1.6;
+}
+
+.response-actions{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-top:18px;
+}
+
+.response-button,
+.confirm-button{
+    appearance:none;
+    border:1px solid var(--gold);
+    background:#173247;
+    color:var(--text);
+    font-family:Georgia, "Times New Roman", serif;
+    font-size:16px;
+    padding:10px 18px;
+    border-radius:999px;
+    cursor:pointer;
+}
+
+.response-button:hover,
+.confirm-button:hover{
+    background:#1c3a52;
+}
+
+.response-button.accept{
+    background:#2e7d32;
+    border-color:#4b8f63;
+}
+
+.response-button.decline{
+    background:#7b2d2d;
+    border-color:#a35656;
+}
+
+.response-button.away{
+    background:#6b4d1f;
+    border-color:var(--gold);
+}
+
+.confirm-row{
+    display:flex;
+    justify-content:flex-start;
+    align-items:center;
+    gap:14px;
+    flex-wrap:wrap;
+    margin-top:18px;
+}
+
+.confirmed{
+    color:#8fd19e;
+    font-size:15px;
+}
+
+.awaiting{
+    color:#d5b06a;
+    font-size:15px;
+}
+
+.empty{
+    border:1px dashed var(--line-soft);
+    border-radius:12px;
+    padding:20px;
+    background:var(--panel);
+    color:var(--muted);
+    line-height:1.75;
+}
+
+@media (max-width: 980px){
+    .meta-grid{
+        grid-template-columns:1fr;
+    }
+
+    .concert-head{
+        flex-direction:column;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="page">
+<div class="card">
+
+<div class="header">
+<img src="/static/annotatio_logo.png" alt="Annotatio">
+<div class="title">Musician Hub</div>
+<div class="subtitle">Signed in as: {{ user.email }}</div>
+<div class="rule"></div>
+
+<div class="action-row">
+    <a class="action-link" href="/musician/profile">Open My Profile</a>
+    <a class="action-link" href="/logout">Logout</a>
+</div>
+</div>
+
+<div class="section">
+<h3>Current Concerts</h3>
+
+<div class="intro">
+Your concert access now sits in separate concert cards.
+Each card keeps its own response, comment, sent date, accepted date, and confirmation state.
+</div>
+</div>
+
+<div class="section">
+{% if concert_receipts %}
+<div class="concert-list">
+{% for receipt in concert_receipts %}
+<div class="concert-card">
+    <div class="concert-head">
+        <div>
+            <div class="concert-title">{{ receipt["concert_name"] }}</div>
+            <div class="concert-sub">
+                {{ receipt["organisation_name"] }}<br>
+                {% if receipt["concert_date"] %}Concert date: {{ receipt["concert_date"] }}<br>{% endif %}
+                {% if receipt["concert_ref"] %}Concert ref: {{ receipt["concert_ref"] }}{% endif %}
+            </div>
+        </div>
+
+        {% set state = receipt["invite_status"] %}
+        <div class="seal {% if state == 'accepted' %}green{% elif state in ['declined', 'away'] %}red{% else %}amber{% endif %}">
+            {{ state|capitalize }}
+        </div>
+    </div>
+
+    <div class="concert-body">
+        <div class="meta-grid">
+            <div class="meta-box">
+                <div class="meta-label">Invite sent</div>
+                <div class="meta-value">{{ receipt["invite_sent_at"] or "—" }}</div>
+            </div>
+
+            <div class="meta-box">
+                <div class="meta-label">Accepted</div>
+                <div class="meta-value">{{ receipt["accepted_at"] or "—" }}</div>
+            </div>
+
+            <div class="meta-box">
+                <div class="meta-label">Current file</div>
+                <div class="meta-value">
+                    {% if receipt["current_file_label"] %}
+                        {{ receipt["current_file_label"] }}
+                    {% else %}
+                        Awaiting issue
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="response-panel">
+            <form method="post" action="/musician/invitation/respond">
+                <input type="hidden" name="invite_id" value="{{ receipt['invite_id'] }}">
+
+                <label class="response-label" for="comment_{{ receipt['invite_id'] }}">Comment for the librarian</label>
+                <textarea
+                    class="response-textarea"
+                    id="comment_{{ receipt['invite_id'] }}"
+                    name="comment"
+                    placeholder="Add any notes for the librarian here."
+                >{{ receipt["musician_comment"] or "" }}</textarea>
+
+                <div class="response-help">Use this for timing notes, travel issues, part questions, or availability comments.</div>
+
+                <div class="response-actions">
+                    {% if receipt["invite_status"] != "accepted" %}
+                    <button class="response-button accept" type="submit" name="response_action" value="accept">Accept Invitation</button>
+                    {% endif %}
+                    <button class="response-button decline" type="submit" name="response_action" value="decline">Decline Invitation</button>
+                    <button class="response-button away" type="submit" name="response_action" value="away">Mark Away</button>
+                </div>
+            </form>
+
+            <div class="confirm-row">
+                {% if receipt["confirmed_at"] %}
+                    <div class="confirmed">✓ Confirmed</div>
+                {% else %}
+                    <form method="post" action="/musician/confirm" style="margin:0;">
+                        <input type="hidden" name="invite_id" value="{{ receipt['invite_id'] }}">
+                        <button class="confirm-button" type="submit" style="background:#2e7d32; border-color:#4b8f63;">
+                            Confirm Received
+                        </button>
+                    </form>
+                    <div class="awaiting">• Awaiting confirmation</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+</div>
+{% else %}
+<div class="empty">
+No concert cards yet.
+When a concert invite is accepted, it will appear here as its own separate card.
+</div>
+{% endif %}
+</div>
+
+</div>
+</div>
+
+{% if intro_knock_receipt_ids %}
+<audio id="intro-knock-audio" preload="auto">
+    <source src="{{ intro_knock_audio_url }}" type="audio/mpeg">
+</audio>
+<script>
+(function () {
+    const receiptIds = [{% for receipt_id in intro_knock_receipt_ids %}{{ receipt_id }}{% if not loop.last %}, {% endif %}{% endfor %}];
+    const audio = document.getElementById("intro-knock-audio");
+
+    if (!audio || !receiptIds.length) {
+        return;
+    }
+
+    let completed = false;
+
+    function markHeard() {
+        if (completed) {
+            return;
+        }
+        completed = true;
+
+        receiptIds.forEach(function (receiptId) {
+            fetch("/musician/intro_knock/heard?email={{ user['email'] | urlencode }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: "receipt_id=" + encodeURIComponent(String(receiptId))
+            }).catch(function () {});
+        });
+    }
+
+    audio.addEventListener("ended", markHeard);
+    audio.addEventListener("error", markHeard);
+
+    const playPromise = audio.play();
+    if (playPromise && typeof playPromise.catch === "function") {
+        playPromise.catch(function () {
+            markHeard();
+        });
+    }
+})();
+</script>
+{% endif %}
+
+</body>
+</html>

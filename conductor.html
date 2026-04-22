@@ -1,0 +1,634 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Annotatio • Conductor Hub</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+:root{
+    --bg:#071018;
+    --card:#0b1622;
+    --panel:#101e2d;
+    --panel-soft:#0d1927;
+    --line:#223548;
+    --line-soft:#31455c;
+    --gold:#b89457;
+    --text:#f2f0ea;
+    --muted:#c8d0d8;
+    --blue:#74d3de;
+    --green:#3d8d57;
+    --amber:#b89457;
+    --red:#9f4343;
+}
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    font-family:Georgia, "Times New Roman", serif;
+    background:var(--bg);
+    color:var(--text);
+}
+
+.page{
+    max-width:1240px;
+    margin:24px auto 40px auto;
+    padding:0 20px;
+}
+
+.card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:40px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.35);
+}
+
+.header{
+    text-align:center;
+    margin-bottom:28px;
+}
+
+.header img{
+    width:420px;
+    max-width:82%;
+}
+
+.title{
+    font-size:34px;
+    color:var(--blue);
+    margin-top:12px;
+}
+
+.subtitle{
+    color:var(--muted);
+    margin-top:8px;
+    font-size:18px;
+}
+
+.rule{
+    height:1px;
+    width:220px;
+    background:var(--gold);
+    margin:18px auto 10px auto;
+}
+
+.action-row{
+    display:flex;
+    justify-content:center;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-top:18px;
+}
+
+.action-link{
+    display:inline-block;
+    padding:9px 16px;
+    background:#173247;
+    color:var(--text);
+    text-decoration:none;
+    border:1px solid var(--gold);
+    border-radius:999px;
+    font-size:15px;
+}
+
+.action-link:hover{
+    background:#1c3a52;
+}
+
+.section{
+    margin-top:28px;
+}
+
+.section h3{
+    margin:0 0 12px 0;
+    font-size:24px;
+    color:var(--blue);
+}
+
+.intro{
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:18px;
+    background:var(--panel);
+    color:var(--muted);
+    line-height:1.75;
+}
+
+.upload-panel{
+    border:1px solid var(--line);
+    border-radius:14px;
+    background:var(--panel);
+    padding:20px;
+}
+
+.label{
+    display:block;
+    font-size:16px;
+    color:#e5dccb;
+    margin:0 0 8px 0;
+}
+
+.input,
+.textarea,
+.file-input{
+    width:100%;
+    box-sizing:border-box;
+    padding:12px 14px;
+    border:1px solid #3a4d63;
+    border-radius:10px;
+    background:#f6f3ec;
+    color:#1d2430;
+    font-family:Georgia, "Times New Roman", serif;
+    font-size:16px;
+    outline:none;
+}
+
+.textarea{
+    min-height:130px;
+    resize:vertical;
+}
+
+.field-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+    margin-bottom:14px;
+}
+
+.help{
+    margin-top:8px;
+    color:var(--muted);
+    font-size:14px;
+    line-height:1.6;
+}
+
+.button-row{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-top:20px;
+}
+
+.send-button{
+    appearance:none;
+    border:1px solid var(--line-soft);
+    background:#596673;
+    color:var(--text);
+    font-family:Georgia, "Times New Roman", serif;
+    font-size:16px;
+    padding:12px 20px;
+    border-radius:999px;
+    cursor:pointer;
+}
+
+.send-button.success{
+    background:#2e7d32;
+    border-color:#4b8f63;
+}
+
+.send-button.fail{
+    background:#7b2d2d;
+    border-color:#a35656;
+}
+
+.send-button.idle{
+    background:#596673;
+    border-color:#7a8896;
+}
+
+.send-button.ready{
+    background:#173247;
+    border-color:var(--gold);
+}
+
+.send-button.received{
+    background:#6b4d1f;
+    border-color:var(--gold);
+}
+
+.send-button.forwarded{
+    background:#2e7d32;
+    border-color:#4b8f63;
+}
+
+.banner{
+    margin-top:16px;
+    padding:14px 16px;
+    border-radius:12px;
+    border:1px solid var(--line-soft);
+    font-size:15px;
+    line-height:1.65;
+}
+
+.banner.success{
+    background:rgba(61,141,87,0.16);
+    border-color:#4b8f63;
+}
+
+.banner.fail{
+    background:rgba(159,67,67,0.18);
+    border-color:#b15a5a;
+}
+
+.update-list{
+    display:grid;
+    gap:18px;
+}
+
+.update-card{
+    border:1px solid var(--line);
+    border-radius:14px;
+    background:var(--panel);
+    overflow:hidden;
+}
+
+.update-head{
+    display:flex;
+    justify-content:space-between;
+    gap:18px;
+    align-items:flex-start;
+    padding:18px 20px;
+    border-bottom:1px solid var(--line);
+    background:var(--panel-soft);
+}
+
+.update-title{
+    font-size:26px;
+    color:var(--blue);
+    margin:0 0 6px 0;
+}
+
+.update-sub{
+    font-size:16px;
+    color:var(--muted);
+    line-height:1.7;
+}
+
+.seal{
+    min-width:120px;
+    text-align:center;
+    padding:10px 14px;
+    border-radius:999px;
+    border:1px solid var(--line-soft);
+    font-size:15px;
+    color:var(--text);
+}
+
+.seal.green{
+    background:rgba(61,141,87,0.18);
+    border-color:#4b8f63;
+}
+
+.seal.amber{
+    background:rgba(184,148,87,0.18);
+    border-color:var(--gold);
+}
+
+.seal.red{
+    background:rgba(159,67,67,0.18);
+    border-color:#b15a5a;
+}
+
+.update-body{
+    padding:20px;
+}
+
+.meta-grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:12px;
+}
+
+.meta-box{
+    border:1px solid var(--line-soft);
+    border-radius:12px;
+    background:#0b1622;
+    padding:14px 16px;
+}
+
+.meta-label{
+    font-size:13px;
+    color:var(--muted);
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    margin-bottom:6px;
+}
+
+.meta-value{
+    font-size:16px;
+    color:var(--text);
+    line-height:1.6;
+}
+
+.message-box{
+    margin-top:14px;
+    border:1px solid var(--line-soft);
+    border-radius:12px;
+    background:#0b1622;
+    padding:14px 16px;
+    color:var(--muted);
+    line-height:1.7;
+}
+
+.message-sheet{
+    margin-top:14px;
+    min-height:760px;
+    padding:120px 120px 170px 120px;
+    border:none;
+    border-radius:12px;
+    background-image:url("/static/Conductor_wax_note.png");
+    background-repeat:no-repeat;
+    background-position:center top;
+    background-size:contain;
+    color:#2d2116;
+    line-height:1.8;
+    white-space:pre-wrap;
+    box-sizing:border-box;
+    display:flex;
+    align-items:flex-start;
+    justify-content:flex-start;
+}
+
+.message-sheet-text{
+    width:100%;
+    max-width:100%;
+    font-size:28px;
+}
+
+.empty{
+    border:1px dashed var(--line-soft);
+    border-radius:12px;
+    padding:20px;
+    background:var(--panel);
+    color:var(--muted);
+    line-height:1.75;
+}
+
+@media (max-width: 980px){
+    .field-grid,
+    .meta-grid{
+        grid-template-columns:1fr;
+    }
+
+    .update-head{
+        flex-direction:column;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="page">
+<div class="card">
+
+<div class="header">
+<img src="/static/annotatio_logo.png" alt="Annotatio">
+<div class="title">Conductor Hub</div>
+<div class="subtitle">Signed in as: {{ user.email }}</div>
+<div class="rule"></div>
+
+<div class="action-row">
+    <a class="action-link" href="/conductor/profile">Open My Profile</a>
+    <a class="action-link" href="/conductor/invite?email={{ user.email }}">Conductor Invitation</a>
+    <a class="action-link" href="/logout">Logout</a>
+</div>
+</div>
+
+<div class="section">
+<h3>Conductor Upload</h3>
+
+<div class="intro">
+Use the single button only.
+Its state shows where your current file sits inside Concert Control.
+</div>
+</div>
+
+<div class="section">
+<div class="upload-panel">
+    <div class="field-grid">
+        <div>
+            <label class="label" for="concert_name">Concert name</label>
+            <input class="input" id="concert_name" name="concert_name" type="text" value="{{ active_concert_name or '' }}" form="conductor-upload-form" required>
+        </div>
+
+        <div>
+            <label class="label" for="concert_ref">Concert ref</label>
+            <input class="input" id="concert_ref" name="concert_ref" type="text" value="{{ active_concert_ref or '' }}" form="conductor-upload-form">
+        </div>
+    </div>
+
+    <form id="conductor-upload-form" method="post" action="/conductor/upload_files?email={{ user.email }}" enctype="multipart/form-data">
+        <div style="margin-bottom:14px;">
+            <label class="label" for="score_uploads">Upload files for this concert bundle</label>
+            <input class="file-input" id="score_uploads" name="score_uploads" type="file" multiple required>
+            <div class="help">Upload the full conductor packet here. Add as many files as needed, review them below, then click SEND once.</div>
+        </div>
+
+        <input type="hidden" name="concert_name" value="{{ active_concert_name or '' }}">
+        <input type="hidden" name="concert_ref" value="{{ active_concert_ref or '' }}">
+
+        <div class="button-row" style="margin-top:0;">
+            <button class="send-button ready" type="submit">ADD FILES</button>
+        </div>
+    </form>
+
+    {% if conductor_draft_files %}
+    <div style="margin-top:22px; padding:18px; border:1px solid var(--line); border-radius:12px; background:var(--panel-soft);">
+        <div style="font-size:20px; color:var(--blue); margin-bottom:12px;">Current bundle waiting to send</div>
+
+        <div style="display:grid; gap:12px;">
+            {% for draft in conductor_draft_files %}
+            <div style="padding:12px 14px; border:1px solid var(--line); border-radius:12px; background:var(--panel);">
+                <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start;">
+                    <div style="min-width:0;">
+                        <div style="font-size:17px; color:var(--text); margin-bottom:4px;">{{ draft["upload_filename"] }}</div>
+                        <div style="font-size:14px; color:var(--muted); line-height:1.6;">Uploaded {{ draft["upload_timestamp"] or draft["created_at"] or "—" }}</div>
+                    </div>
+                    <form method="post" action="/conductor/draft/{{ draft['id'] }}/delete?email={{ user.email }}">
+                        <input type="hidden" name="concert_name" value="{{ active_concert_name or '' }}">
+                        <input type="hidden" name="concert_ref" value="{{ active_concert_ref or '' }}">
+                        <button class="send-button fail" type="submit">DELETE</button>
+                    </form>
+                </div>
+
+                <form method="post" action="/conductor/draft/{{ draft['id'] }}/score_note?email={{ user.email }}" style="margin-top:14px;">
+                    <label class="label" for="score_note_{{ draft['id'] }}">Score note</label>
+                    <textarea class="textarea" id="score_note_{{ draft['id'] }}" name="score_note" placeholder="Add the conductor note for this score only.">{{ draft["score_note"] or "" }}</textarea>
+                    <input type="hidden" name="concert_name" value="{{ active_concert_name or '' }}">
+                    <input type="hidden" name="concert_ref" value="{{ active_concert_ref or '' }}">
+                    <div class="button-row" style="margin-top:12px;">
+                        <button class="send-button ready" type="submit">SAVE SCORE NOTE</button>
+                    </div>
+                </form>
+            </div>
+            {% endfor %}
+        </div>
+
+        <form method="post" action="/conductor/send_update?email={{ user.email }}" style="margin-top:18px;">
+            <div>
+                <label class="label" for="message">Bundle cover note</label>
+                <textarea class="textarea" id="message" name="message" placeholder="Add the overall conductor note for this whole bundle here."></textarea>
+                <div class="help">This note applies to the full concert issue cycle. If left blank, no bundle note page will be created.</div>
+            </div>
+
+            <input type="hidden" name="concert_name" value="{{ active_concert_name or '' }}">
+            <input type="hidden" name="concert_ref" value="{{ active_concert_ref or '' }}">
+
+            <div class="button-row">
+                <button class="send-button ready" type="submit">SEND</button>
+            </div>
+        </form>
+    </div>
+    {% else %}
+    <div style="margin-top:22px; padding:18px; border:1px dashed var(--line); border-radius:12px; background:var(--panel-soft); color:var(--muted); line-height:1.7;">
+        Add files into the concert bundle first. When the bundle is complete, SEND releases the whole set in one action.
+    </div>
+    {% endif %}
+
+{% if upload_result == "drafted" %}
+<div class="banner success">
+Files added to the conductor bundle. Review the list, then click SEND once when ready.
+</div>
+{% elif upload_result == "sent" %}
+<div class="banner success">
+Concert bundle submitted. Waiting for Concert Control receipt.
+</div>
+{% elif upload_result == "failed" %}
+<div class="banner fail">
+Upload failed. No valid concert bundle was sent.
+</div>
+{% elif conductor_button_state == "received" %}
+<div class="banner success">
+Concert Control has this bundle. Click RECEIVED to reset the button back to SEND.
+</div>
+{% elif conductor_button_state == "sent_to_all" %}
+<div class="banner success">
+Outward issue completed. Click SENT TO ALL to begin a fresh SEND cycle.
+</div>
+{% endif %}
+</div>
+</div>
+
+<div class="section">
+<h3>Recent Uploads</h3>
+
+{% if conductor_updates %}
+<div class="meta-grid" style="margin-bottom:18px;">
+    <div class="meta-box">
+        <div class="meta-label">Sent</div>
+        <div class="meta-value">
+            {{ conductor_updates | selectattr("cycle_state", "equalto", "sent") | list | length }}
+        </div>
+    </div>
+
+    <div class="meta-box">
+        <div class="meta-label">Received</div>
+        <div class="meta-value">
+            {{ conductor_updates | selectattr("cycle_state", "equalto", "received") | list | length }}
+        </div>
+    </div>
+
+    <div class="meta-box">
+        <div class="meta-label">Sent to all</div>
+        <div class="meta-value">
+            {{ conductor_updates | selectattr("cycle_state", "equalto", "sent_to_all") | list | length }}
+        </div>
+    </div>
+</div>
+
+<div class="update-list">
+{% for update in conductor_updates %}
+<div class="update-card">
+    <div class="update-head">
+        <div>
+            <div class="update-title">{{ update["concert_name"] }}</div>
+            <div class="update-sub">
+                {% if update["concert_ref"] %}Concert ref: {{ update["concert_ref"] }}<br>{% endif %}
+                Uploaded file: {{ update["upload_filename"] }}
+            </div>
+        </div>
+
+        {% if update["cycle_state"] == "failed" %}
+            <div class="seal red">Failed</div>
+        {% elif update["cycle_state"] == "sent_to_all" %}
+            <div class="seal green">Sent to All</div>
+        {% elif update["cycle_state"] == "received" %}
+            <div class="seal amber">Received</div>
+        {% elif update["cycle_state"] == "sent" %}
+            <div class="seal amber">Sent</div>
+        {% elif update["cycle_state"] == "superseded" %}
+            <div class="seal red">Superseded</div>
+        {% else %}
+            <div class="seal amber">Pending</div>
+        {% endif %}
+    </div>
+
+    <div class="update-body">
+        <div class="meta-grid">
+            <div class="meta-box">
+                <div class="meta-label">Send state</div>
+                <div class="meta-value">
+                    {% if update["cycle_state"] == "failed" %}
+                        Upload failed at Concert Control
+                    {% elif update["cycle_state"] == "sent_to_all" %}
+                        Outward issue completed
+                    {% elif update["cycle_state"] == "received" %}
+                        Concert Control has this file
+                    {% elif update["cycle_state"] == "sent" %}
+                        Waiting for Concert Control receipt
+                    {% elif update["cycle_state"] == "superseded" %}
+                        Replaced by a newer cycle
+                    {% else %}
+                        Pending
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="meta-box">
+                <div class="meta-label">Forward status</div>
+                <div class="meta-value">{{ update["forward_status"] or "idle" }}</div>
+            </div>
+
+            <div class="meta-box">
+                <div class="meta-label">Updated at</div>
+                <div class="meta-value">{{ update["updated_at"] or update["created_at"] or "—" }}</div>
+            </div>
+        </div>
+
+               {% if update["message_note"] %}
+        <div class="message-sheet">
+            <div class="message-sheet-text">{{ update["message_note"] }}</div>
+        </div>
+        {% else %}
+        <div class="message-box">
+            No conductor bundle note supplied.
+        </div>
+        {% endif %}
+
+        {% if update["score_note"] %}
+        <div class="message-box">
+            <div style="font-size:13px; letter-spacing:0.08em; text-transform:uppercase; color:#d5b06a; margin-bottom:6px;">Score note</div>
+            {{ update["score_note"] }}
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endfor %}
+</div>
+{% else %}
+<div class="empty">
+No conductor uploads yet.
+</div>
+{% endif %}
+</div>
+
+</div>
+</div>
+
+</body>
+</html>

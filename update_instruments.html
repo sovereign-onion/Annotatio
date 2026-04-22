@@ -1,0 +1,439 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Annotatio — Edit Instruments</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body{
+      margin:0;
+      padding:0;
+      background:#071018;
+      font-family: Georgia, "Times New Roman", serif;
+      color:#f2f0ea;
+    }
+
+    .wrap{
+      max-width:1000px;
+      margin:18px auto;
+      padding:0 18px;
+    }
+
+    .card{
+      background:#0b1622;
+      border:1px solid #223548;
+      border-radius:14px;
+      overflow:hidden;
+      box-shadow:0 10px 30px rgba(0,0,0,0.28);
+      max-width:860px;
+      margin:20px auto;
+    }
+
+    .top{
+      padding:14px 18px 4px 18px;
+      text-align:center;
+    }
+
+    .top img{
+      display:block;
+      margin:0 auto;
+      width:460px;
+      max-width:85%;
+      height:auto;
+      border:0;
+      opacity:1;
+    }
+
+    .rule{
+      height:1px;
+      width:170px;
+      background:#b89457;
+      margin:6px auto 12px auto;
+    }
+
+    .content{
+      padding:16px 34px 28px 34px;
+    }
+
+    h1{
+      margin:0 0 14px 0;
+      font-size:24px;
+      line-height:1.2;
+      color:#74d3de;
+      font-weight:bold;
+    }
+
+    .intro{
+      font-size:15px;
+      line-height:1.6;
+      color:#f2f0ea;
+      margin:0 0 12px 0;
+    }
+
+    .form-block{
+      margin-top:18px;
+      padding:18px;
+      background:#101e2d;
+      border:1px solid #223548;
+      border-radius:12px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:14px 16px;
+    }
+
+    .full{
+      grid-column:1 / -1;
+    }
+
+    label{
+      display:block;
+      font-size:18px;
+      line-height:1.5;
+      color:#e5dccb;
+      margin:0 0 8px 0;
+    }
+
+    input,
+    select,
+    textarea{
+      width:100%;
+      box-sizing:border-box;
+      padding:12px 14px;
+      border:1px solid #3a4d63;
+      border-radius:10px;
+      background:#f6f3ec;
+      color:#1d2430;
+      font-family:Georgia, "Times New Roman", serif;
+      font-size:16px;
+      outline:none;
+    }
+
+    textarea{
+      min-height:120px;
+      resize:vertical;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus{
+      border-color:#74d3de;
+      box-shadow:0 0 0 3px rgba(116,211,222,0.18);
+    }
+
+    .help{
+      margin-top:8px;
+      font-size:15px;
+      line-height:1.6;
+      color:#c8d0d8;
+    }
+
+    .section-title{
+      margin:6px 0 14px 0;
+      font-size:22px;
+      line-height:1.4;
+      color:#74d3de;
+    }
+
+    .actions{
+      text-align:center;
+      margin-top:26px;
+    }
+
+    .save-btn{
+      appearance:none;
+      border:1px solid #b89457;
+      background:linear-gradient(to bottom, #173247, #102435);
+      color:#f2f0ea;
+      font-family:Georgia, "Times New Roman", serif;
+      font-size:20px;
+      padding:14px 34px;
+      border-radius:999px;
+      cursor:pointer;
+    }
+
+    .save-btn:hover{
+      background:linear-gradient(to bottom, #1c3a52, #133046);
+    }
+
+    @media (max-width: 640px){
+      .content{
+        padding:24px 22px 30px 22px;
+      }
+
+      .grid{
+        grid-template-columns:1fr;
+      }
+
+      h1{
+        font-size:28px;
+      }
+
+      .intro{
+        font-size:18px;
+      }
+
+      .form-block{
+        padding:18px;
+      }
+
+      input,
+      select,
+      textarea{
+        font-size:17px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+{% set named_primary_instruments = [
+  "Violin I", "Violin II", "Viola", "Cello", "Double Bass", "Flute", "Oboe",
+  "Clarinet", "Bassoon", "Horn", "Trumpet", "Trombone", "Tuba", "Timpani",
+  "Percussion", "Harp", "Piano", "Voice", "Guest"
+] %}
+
+{% set named_other_instruments = [
+  "Violin I", "Violin II", "Viola", "Cello", "Double Bass", "Flute", "Oboe",
+  "Clarinet", "Bassoon", "Horn", "Trumpet", "Trombone", "Tuba", "Timpani",
+  "Percussion", "Harp", "Piano", "Voice", "Guest"
+] %}
+
+{% set custom_primary = '' %}
+{% if musician.primary_instrument and musician.primary_instrument not in named_primary_instruments %}
+  {% set custom_primary = musician.primary_instrument %}
+{% endif %}
+
+{% set other_text = musician.other_instruments or '' %}
+{% set ns = namespace(custom_other='') %}
+
+{% if other_text %}
+  {% for part in other_text.split(',') %}
+    {% set item = part.strip() %}
+    {% if item and item not in named_other_instruments %}
+      {% if ns.custom_other %}
+        {% set ns.custom_other = ns.custom_other ~ ', ' ~ item %}
+      {% else %}
+        {% set ns.custom_other = item %}
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+{% endif %}
+
+<div class="wrap">
+  <div class="card">
+    <div class="top">
+      <img src="/static/annotatio_logo.png" alt="annotatio">
+    </div>
+      <div class="rule"></div>
+
+      <div class="content">
+        <h1>Edit Instruments</h1>
+
+        <div class="form-block">
+          <form method="post" action="/musician/update_instruments">
+
+            <div class="section-title" style="margin-top:0;">Music details</div>
+
+            <div class="grid">
+              <div>
+                <label for="primary_instrument">Primary instrument</label>
+                <select id="primary_instrument" name="primary_instrument" required onchange="togglePrimaryOtherField()">
+                  <option value="">Select your primary instrument</option>
+                  <option {% if musician.primary_instrument == "Violin I" %}selected{% endif %}>Violin I</option>
+                  <option {% if musician.primary_instrument == "Violin II" %}selected{% endif %}>Violin II</option>
+                  <option {% if musician.primary_instrument == "Viola" %}selected{% endif %}>Viola</option>
+                  <option {% if musician.primary_instrument == "Cello" %}selected{% endif %}>Cello</option>
+                  <option {% if musician.primary_instrument == "Double Bass" %}selected{% endif %}>Double Bass</option>
+                  <option {% if musician.primary_instrument == "Flute" %}selected{% endif %}>Flute</option>
+                  <option {% if musician.primary_instrument == "Oboe" %}selected{% endif %}>Oboe</option>
+                  <option {% if musician.primary_instrument == "Clarinet" %}selected{% endif %}>Clarinet</option>
+                  <option {% if musician.primary_instrument == "Bassoon" %}selected{% endif %}>Bassoon</option>
+                  <option {% if musician.primary_instrument == "Horn" %}selected{% endif %}>Horn</option>
+                  <option {% if musician.primary_instrument == "Trumpet" %}selected{% endif %}>Trumpet</option>
+                  <option {% if musician.primary_instrument == "Trombone" %}selected{% endif %}>Trombone</option>
+                  <option {% if musician.primary_instrument == "Tuba" %}selected{% endif %}>Tuba</option>
+                  <option {% if musician.primary_instrument == "Timpani" %}selected{% endif %}>Timpani</option>
+                  <option {% if musician.primary_instrument == "Percussion" %}selected{% endif %}>Percussion</option>
+                  <option {% if musician.primary_instrument == "Harp" %}selected{% endif %}>Harp</option>
+                  <option {% if musician.primary_instrument == "Piano" %}selected{% endif %}>Piano</option>
+                  <option {% if musician.primary_instrument == "Voice" %}selected{% endif %}>Voice</option>
+                  <option {% if musician.primary_instrument == "Guest" %}selected{% endif %}>Guest</option>
+ 		  <option {% if custom_primary %}selected{% endif %}>Other</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="voice_type">Voice type <span style="color:#c8d0d8;">(if relevant)</span></label>
+                <select id="voice_type" name="voice_type">
+                  <option value="">Select if applicable</option>
+                  <option {% if musician.voice_type == "Soprano" %}selected{% endif %}>Soprano</option>
+                  <option {% if musician.voice_type == "Mezzo-Soprano" %}selected{% endif %}>Mezzo-Soprano</option>
+                  <option {% if musician.voice_type == "Alto" %}selected{% endif %}>Alto</option>
+                  <option {% if musician.voice_type == "Tenor" %}selected{% endif %}>Tenor</option>
+                  <option {% if musician.voice_type == "Baritone" %}selected{% endif %}>Baritone</option>
+                  <option {% if musician.voice_type == "Bass" %}selected{% endif %}>Bass</option>
+                  <option {% if musician.voice_type == "Other" %}selected{% endif %}>Other</option>
+                </select>
+              </div>
+
+              <div class="full" id="primary_other_wrap" style="display:none;">
+                <label for="primary_other">Please specify primary instrument / role</label>
+                <input
+  		  type="text"
+		  id="primary_other"
+		  name="primary_other"
+		  placeholder="Example: Cor anglais, Bass Clarinet, Narrator"
+		  value="{{ custom_primary }}"
+		>
+              </div>
+
+              <div class="full">
+                <label>Other instruments / doubling <span style="color:#c8d0d8;">(optional)</span></label>
+                <div id="other_instruments_note" style="margin:6px 0 14px 0; font-size:15px; line-height:1.6; color:#c8d0d8;">
+                  Do not tick your primary instrument here.
+                </div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px 18px; padding:16px; border:1px solid #3a4d63; border-radius:10px; background:#0b1622;">
+                  <label style="display:flex; align-items:center; gap:10px; margin:0; font-size:18px;">
+                    <input type="checkbox" name="other_instruments[]" value="Violin I" style="width:auto;" {% if musician.other_instruments and "Violin I" in musician.other_instruments %}checked{% endif %}> Violin I
+                  </label>
+                  <label style="display:flex; align-items:center; gap:10px; margin:0; font-size:18px;">
+                    <input type="checkbox" name="other_instruments[]" value="Violin II" style="width:auto;" {% if musician.other_instruments and "Violin II" in musician.other_instruments %}checked{% endif %}> Violin II
+                  </label>
+                  <label style="display:flex; align-items:center; gap:10px; margin:0; font-size:18px;">
+                    <input type="checkbox" name="other_instruments[]" value="Viola" style="width:auto;" {% if musician.other_instruments and "Viola" in musician.other_instruments %}checked{% endif %}> Viola
+                  </label>
+                  <label style="display:flex; align-items:center; gap:10px; margin:0; font-size:18px;">
+                    <input type="checkbox" name="other_instruments[]" value="Cello" style="width:auto;" {% if musician.other_instruments and "Cello" in musician.other_instruments %}checked{% endif %}> Cello
+                  </label>
+                  <label style="display:flex; align-items:center; gap:10px; margin:0; font-size:18px;">
+                    <input type="checkbox" name="other_instruments[]" value="Double Bass" style="width:auto;" {% if musician.other_instruments and "Double Bass" in musician.other_instruments %}checked{% endif %}> Double Bass
+                  </label>
+                  <label style="display:flex; align-items:center; gap:10px; margin:0; font-size:18px;">
+                    <input type="checkbox" name="other_instruments[]" value="Flute" style="width:auto;" {% if musician.other_instruments and "Flute" in musician.other_instruments %}checked{% endif %}> Flute
+                  </label>
+                  <label style="display:flex; align-items:center; gap:10px; margin:0; font-size:18px;">
+                    <input type="checkbox" name="other_instruments[]" value="Oboe" style="width:auto;" {% if musician.other_instruments and "Oboe" in musician.other_instruments %}checked{% endif %}> Oboe
+                  </label>
+                  <label style="display:flex; align-items:center; gap:10px; margin:0; font-size:18px;">
+                    <input type="checkbox" name="other_instruments[]" value="Clarinet" style="width:auto;" {% if musician.other_instruments and "Clarinet" in musician.other_instruments %}checked{% endif %}> Clarinet
+                  </label>
+                  <label style="display:flex; align-items:center; gap:10px; margin:0; font-size:18px;">
+                    <input type="checkbox" name="other_instruments[]" value="Bassoon" style="width:auto;" {% if musician.other_instruments and "Bassoon" in musician.other_instruments %}checked{% endif %}> Bassoon
+                  </label>
+                  <label style="display:flex; align-items:center; gap:10px; margin:0; font-size:18px;">
+                    <input type="checkbox" name="other_instruments[]" value="Horn" style="width:auto;" {% if musician.other_instruments and "Horn" in musician.other_instruments %}checked{% endif %}> Horn
+                  </label>
+                  <label style="display:flex; align-items:center; gap:10px; margin:0; font-size:18px;">
+                    <input type="checkbox" name="other_instruments[]" value="Trumpet" style="width:auto;" {% if musician.other_instruments and "Trumpet" in musician.other_instruments %}checked{% endif %}> Trumpet
+                  </label>
+                  <label style="display:flex; align-items:center; gap:10px; margin:0; font-size:18px;">
+                    <input type="checkbox" name="other_instruments[]" value="Trombone" style="width:auto;" {% if musician.other_instruments and "Trombone" in musician.other_instruments %}checked{% endif %}> Trombone
+                  </label>
+                  <label style="display:flex; align-items:center; gap:10px; margin:0; font-size:18px;">
+                    <input type="checkbox" name="other_instruments[]" value="Tuba" style="width:auto;" {% if musician.other_instruments and "Tuba" in musician.other_instruments %}checked{% endif %}> Tuba
+                  </label>
+                  <label style="display:flex; align-items:center; gap:10px; margin:0; font-size:18px;">
+                    <input type="checkbox" name="other_instruments[]" value="Timpani" style="width:auto;" {% if musician.other_instruments and "Timpani" in musician.other_instruments %}checked{% endif %}> Timpani
+                  </label>
+                  <label style="display:flex; align-items:center; gap:10px; margin:0; font-size:18px;">
+                    <input type="checkbox" name="other_instruments[]" value="Percussion" style="width:auto;" {% if musician.other_instruments and "Percussion" in musician.other_instruments %}checked{% endif %}> Percussion
+                  </label>
+                  <label style="display:flex; align-items:center; gap:10px; margin:0; font-size:18px;">
+                    <input type="checkbox" name="other_instruments[]" value="Harp" style="width:auto;" {% if musician.other_instruments and "Harp" in musician.other_instruments %}checked{% endif %}> Harp
+                  </label>
+                  <label style="display:flex; align-items:center; gap:10px; margin:0; font-size:18px;">
+                    <input type="checkbox" name="other_instruments[]" value="Piano" style="width:auto;" {% if musician.other_instruments and "Piano" in musician.other_instruments %}checked{% endif %}> Piano
+                  </label>
+                  <label style="display:flex; align-items:center; gap:10px; margin:0; font-size:18px;">
+                    <input type="checkbox" name="other_instruments[]" value="Voice" style="width:auto;" {% if musician.other_instruments and "Voice" in musician.other_instruments %}checked{% endif %}> Voice
+                  </label>
+                  <label style="display:flex; align-items:center; gap:10px; margin:0; font-size:18px;">
+                    <input type="checkbox" name="other_instruments[]" value="Guest" style="width:auto;" {% if musician.other_instruments and "Guest" in musician.other_instruments %}checked{% endif %}> Guest
+                  </label>
+                  <label style="display:flex; align-items:center; gap:10px; margin:0; font-size:18px;">
+                    <input type="checkbox" id="other_instruments_other_tick" name="other_instruments[]" value="Other" style="width:auto;" onchange="toggleOtherInstrumentsField()" {% if ns.custom_other %}checked{% endif %}> Other
+                  </label>
+                </div>
+              </div>
+
+              <div class="full" id="other_instruments_other_wrap" style="display:none;">
+                <label for="other_instruments_other">Please specify other instrument / role</label>
+                <input
+                  type="text"
+                  id="other_instruments_other"
+                  name="other_instruments_other"
+                  placeholder="Example: Piccolo, Alto Flute, English Horn"
+                  value="{{ ns.custom_other }}"
+                >
+              </div>
+
+              <div class="full">
+                <label for="notes">Notes for the librarian <span style="color:#c8d0d8;">(optional)</span></label>
+                <textarea id="notes" name="notes" placeholder="Anything useful for the librarian to know.">{{ musician.notes or '' }}</textarea>
+              </div>
+            </div>
+
+            <div class="actions">
+  		<button type="submit" class="save-btn">Save Instruments</button>
+  		<a href="/musician/profile" class="save-btn" style="margin-left:12px; text-decoration:none;">Cancel</a>
+	    </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+function togglePrimaryOtherField() {
+  const primary = document.getElementById('primary_instrument');
+  const wrap = document.getElementById('primary_other_wrap');
+  const input = document.getElementById('primary_other');
+
+  if (primary && primary.value === 'Other') {
+    wrap.style.display = 'block';
+    input.required = true;
+  } else {
+    wrap.style.display = 'none';
+    input.required = false;
+    input.value = input.value || '';
+  }
+}
+
+function toggleOtherInstrumentsField() {
+  const tick = document.getElementById('other_instruments_other_tick');
+  const wrap = document.getElementById('other_instruments_other_wrap');
+  const input = document.getElementById('other_instruments_other');
+
+  if (tick && tick.checked) {
+    wrap.style.display = 'block';
+    input.required = true;
+  } else {
+    wrap.style.display = 'none';
+    input.required = false;
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  togglePrimaryOtherField();
+  toggleOtherInstrumentsField();
+
+  const otherCheckboxes = document.querySelectorAll('input[name="other_instruments[]"]');
+  otherCheckboxes.forEach(function(cb) {
+    cb.addEventListener('change', function() {
+      toggleOtherInstrumentsField();
+    });
+  });
+
+  const primary = document.getElementById('primary_instrument');
+  if (primary) {
+    primary.addEventListener('change', function() {
+      togglePrimaryOtherField();
+    });
+  }
+});
+</script>
+</body>
+</html>

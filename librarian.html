@@ -1,0 +1,921 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Librarian Dashboard</title>
+
+<style>
+:root{
+  --bg:#071018;
+  --card:#0b1622;
+  --panel:#101e2d;
+  --line:#223548;
+  --line-soft:#31455c;
+  --gold:#b89457;
+  --text:#f2f0ea;
+  --muted:#c8d0d8;
+  --blue:#74d3de;
+  --green:#3d8d57;
+  --amber:#b89457;
+  --red:#9f4343;
+  --shadow:0 10px 30px rgba(0,0,0,0.28);
+  --radius:16px;
+}
+
+*{box-sizing:border-box;}
+
+body{
+  margin:0;
+  font-family:Georgia, "Times New Roman", serif;
+  color:var(--text);
+  background:var(--bg);
+  font-size:17px;
+  line-height:1.6;
+}
+
+a{
+  color:var(--blue);
+  text-decoration:none;
+}
+
+a:hover{
+  text-decoration:underline;
+}
+
+.wrap{
+  max-width:1440px;
+  margin:10px auto 32px;
+  padding:0 18px;
+}
+
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:14px;
+  box-shadow:var(--shadow);
+}
+
+.top{
+  text-align:center;
+  padding:18px 22px 8px 22px;
+}
+
+.logo{
+  width:240px;
+  max-width:100%;
+  height:auto;
+  display:block;
+  margin:0;
+}
+
+.rule{
+  height:1px;
+  width:190px;
+  background:var(--gold);
+  margin:6px auto 14px auto;
+}
+
+.content{
+  padding:18px 26px 30px 26px;
+}
+
+.header-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  gap:18px;
+  flex-wrap:wrap;
+  margin-bottom:20px;
+}
+
+.header-split{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:20px;
+  margin-bottom:14px;
+}
+
+.header-right{
+  display:flex;
+  justify-content:flex-end;
+  align-items:flex-start;
+}
+
+.title h1{
+  margin:0;
+  font-size:34px;
+  line-height:1.15;
+  color:var(--blue);
+}
+
+.title .sub{
+  margin-top:8px;
+  font-size:15px;
+  color:var(--muted);
+}
+
+.quick-note{
+  padding:14px 16px;
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:12px;
+  font-size:15px;
+  line-height:1.6;
+  color:var(--text);
+  margin-bottom:22px;
+}
+
+.summary-grid{
+  display:grid;
+  grid-template-columns:repeat(4, 1fr);
+  gap:10px;
+  margin-bottom:18px;
+}
+
+.summary-card{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:12px;
+}
+
+.summary-label{
+  font-size:15px;
+  color:#e8eef6;
+  margin-bottom:4px;
+  font-weight:500;
+}
+
+.summary-value{
+  font-size:26px;
+  line-height:1.1;
+  color:#ffffff;
+  margin-bottom:4px;
+  font-weight:600;
+}
+
+.summary-note{
+  font-size:16px;
+  color:#cfd9e3;
+  line-height:1.55;
+}
+
+.panel{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:18px;
+  margin-bottom:18px;
+}
+
+.panel h2{
+  margin:0 0 14px 0;
+  color:var(--blue);
+  font-size:24px;
+  line-height:1.25;
+}
+
+.special-events-panel{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:18px;
+  flex-wrap:wrap;
+}
+
+.special-events-copy{
+  flex:1 1 420px;
+}
+
+.special-events-copy p{
+  margin:0;
+  font-size:16px;
+  color:#cfd9e3;
+  line-height:1.6;
+}
+
+.special-events-action{
+  flex:0 0 auto;
+}
+
+.special-events-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:220px;
+  min-height:52px;
+  padding:12px 24px;
+  border:1px solid var(--gold);
+  border-radius:999px;
+  background:linear-gradient(to bottom, #173247, #102435);
+  color:var(--text);
+  font-size:18px;
+  text-decoration:none;
+}
+
+.special-events-btn:hover{
+  text-decoration:none;
+  background:linear-gradient(to bottom, #1c3a52, #133046);
+}
+
+.form-grid{
+  display:grid;
+  grid-template-columns:1.15fr 1.25fr 0.9fr;
+  gap:14px;
+  margin-bottom:14px;
+}
+
+.form-grid2{
+  display:grid;
+  grid-template-columns:1fr 1fr 1.2fr auto;
+  gap:14px;
+  margin-bottom:14px;
+}
+
+.form-grid3{
+  display:grid;
+  grid-template-columns:1.2fr 1fr;
+  gap:14px;
+}
+
+label{
+  display:block;
+  font-size:13px;
+  color:var(--muted);
+  margin-bottom:6px;
+}
+
+input[type="text"],
+input[list],
+select{
+  width:100%;
+  border:1px solid var(--line-soft);
+  border-radius:12px;
+  padding:12px 13px;
+  font-size:15px;
+  background:#0d1927;
+  color:var(--text);
+  font-family:Georgia, "Times New Roman", serif;
+}
+
+input:focus,
+select:focus{
+  outline:none;
+  border-color:var(--blue);
+}
+
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  border:1px solid var(--gold);
+  background:linear-gradient(to bottom, #173247, #102435);
+  color:var(--text);
+  border-radius:999px;
+  padding:10px 16px;
+  font-size:16px;
+  cursor:pointer;
+  text-decoration:none;
+  min-height:42px;
+}
+
+.btn:hover{
+  text-decoration:none;
+  background:linear-gradient(to bottom, #1c3a52, #133046);
+}
+
+.btn.secondary{
+  border-color:var(--line-soft);
+  background:#0d1927;
+}
+
+.search-row{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+
+.search-row input[type="text"]{
+  flex:1;
+  min-width:260px;
+}
+
+.chk{
+  display:flex;
+  gap:8px;
+  align-items:flex-start;
+  font-size:14px;
+  color:var(--muted);
+}
+
+.chk input{
+  margin-top:4px;
+}
+
+.tier-note,
+.helper-note,
+.upgrade-note{
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:#0d1927;
+  padding:12px 14px;
+}
+
+.tier-note{
+  color:#f0e3c9;
+  font-size:15px;
+}
+
+.helper-note{
+  color:#cfd9e3;
+  font-size:14px;
+}
+
+.upgrade-note{
+  color:#cfd9e3;
+  font-size:14px;
+}
+
+.monitor-wrap{
+  overflow-x:auto;
+  overflow-y:auto;
+  max-height:630px;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  table-layout:fixed;
+}
+
+th, td{
+  text-align:left;
+  vertical-align:middle;
+  padding:12px 8px;
+  border-bottom:1px solid var(--line-soft);
+  font-size:17px;
+  line-height:1.5;
+}
+
+th{
+  color:#e5dccb;
+  font-size:13px;
+  background:#0d1927;
+  white-space:nowrap;
+}
+
+tr:last-child td{
+  border-bottom:none;
+}
+
+.concert-cell{
+  min-width:320px;
+}
+
+.concert-title{
+  font-size:20px;
+  color:var(--text);
+  margin-bottom:6px;
+  font-weight:600;
+}
+
+.concert-meta{
+  font-size:16px;
+  color:var(--muted);
+  white-space:nowrap;
+}
+
+.section-head{
+  text-align:center;
+  font-size:13px;
+  padding:6px 4px;
+}
+
+.light-cell{
+  text-align:center;
+}
+
+.light-link{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:26px;
+  height:26px;
+  border-radius:999px;
+  border:1px solid transparent;
+}
+
+.light-link.red{
+  width:36px;
+  height:36px;
+  border-color:#b15a5a;
+  background:rgba(159,67,67,0.12);
+}
+
+.light-dot{
+  width:16px;
+  height:16px;
+  border-radius:999px;
+  display:inline-block;
+  border:1px solid rgba(255,255,255,0.18);
+}
+
+.light-link.red .light-dot{
+  width:20px;
+  height:20px;
+}
+
+.monitor-note{
+  margin:6px 0 14px 0;
+  font-size:16px;
+  color:#cfd9e3;
+  line-height:1.5;
+}
+
+.dot-green{ background:var(--green); }
+.dot-red{
+  background: radial-gradient(circle at 35% 35%, #ff6b6b 0%, #d92f2f 40%, #7a0f0f 100%);
+  box-shadow:
+    0 0 10px rgba(255, 60, 60, 0.6),
+    inset 0 0 6px rgba(0,0,0,0.6);
+}
+.dot-grey{ background:#596673; }
+
+.open-cell{
+  text-align:right;
+  white-space:nowrap;
+}
+
+.empty{
+  padding:18px;
+  border:1px dashed var(--line-soft);
+  border-radius:12px;
+  background:#0d1927;
+  color:var(--muted);
+}
+
+.footnote{
+  margin-top:10px;
+  font-size:13px;
+  line-height:1.55;
+  color:var(--muted);
+}
+
+@media (max-width:1180px){
+  .summary-grid{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .form-grid,
+  .form-grid2,
+  .form-grid3{
+    grid-template-columns:1fr;
+  }
+
+  table{
+    min-width:1120px;
+  }
+}
+
+@media (max-width:720px){
+  .summary-grid{
+    grid-template-columns:1fr;
+  }
+
+  .content{
+    padding:18px;
+  }
+
+  .title h1{
+    font-size:29px;
+  }
+
+  .special-events-btn{
+    min-width:100%;
+  }
+}
+</style>
+</head>
+
+<body>
+<div class="wrap">
+  <div class="card">
+<!-- removed top logo to prevent duplication -->
+      
+    <div class="content">
+
+<div class="header-split">
+
+  <div class="header-left">
+    <div class="title">
+      <h1>Librarian Dashboard</h1>
+      <div class="sub">Signed in as {{ user.email }} · <a href="/logout">Logout</a></div>
+    </div>
+
+    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
+      <a href="/librarian/profile" class="btn">Librarian Profile</a>
+      <a href="/directory" class="btn">Global Directory</a>
+      <a href="/librarian/notes" class="btn">Librarian Notes</a>
+      <a href="/librarian/ensemble" class="btn">Ensembles</a>
+    </div>
+  </div>
+
+  <div class="header-right">
+    {% if logo_exists %}
+      <img class="logo" src="/static/annotatio_logo.png" alt="Annotatio">
+    {% endif %}
+  </div>
+
+</div>
+
+      {% if selected_view %}
+      <div class="quick-note" style="text-align:center; font-weight:600; letter-spacing:0.5px;">
+        {{ selected_view }}
+      </div>
+      {% endif %}
+
+      <div class="quick-note" id="librarian-broadcast" style="text-align:center; font-weight:600; letter-spacing:0.5px; display:flex; justify-content:center; align-items:center; gap:12px;">
+  <span id="broadcast-text">{{ librarian_broadcast }}</span>
+
+  {% if librarian_broadcast %}
+  <button
+    type="button"
+    class="btn secondary"
+    style="min-height:32px; padding:6px 14px; font-size:13px;"
+    onclick="document.getElementById('librarian-broadcast').style.display='none';"
+  >
+    Clear
+  </button>
+  {% endif %}
+</div>
+
+      <div class="summary-grid">
+        <div class="summary-card">
+          <div class="summary-label">Concerts visible</div>
+          <div class="summary-value">{{ concerts|length }}</div>
+          <div class="summary-note">Concerts currently listed on this dashboard.</div>
+        </div>
+
+        <div class="summary-card">
+          <div class="summary-label">Green concerts</div>
+          <div class="summary-value">{{ fully_green_count if fully_green_count is defined else 0 }}</div>
+          <div class="summary-note">Concerts with no current section issues.</div>
+        </div>
+
+        <div class="summary-card">
+          <div class="summary-label">Red sections</div>
+          <div class="summary-value">{{ red_sections_count if red_sections_count is defined else 0 }}</div>
+          <div class="summary-note">Action required now.</div>
+        </div>
+
+        <div class="summary-card">
+          <div class="summary-label">Connected now</div>
+          <div class="summary-value">{{ connected_now_count if connected_now_count is defined else 0 }}</div>
+          <div class="summary-note">Users active in this session window.</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Conductor Invite</h2>
+
+        <div class="helper-note" style="margin-bottom:14px;">
+          Enter the conductor email once. Annotatio will open the finished Conductor invite page with the real front-door link ready to copy into your own email.
+        </div>
+
+        <form method="get" action="/librarian/conductor_invite_builder">
+          <input type="hidden" name="email" value="{{ user.email }}">
+          <div class="search-row">
+            <input type="text" name="conductor_email" placeholder="conductor@email.com" required>
+            <button class="btn" type="submit">Open Conductor Invite</button>
+          </div>
+        </form>
+      </div>
+
+<div class="panel">
+  <h2>Conductor Upload Alerts</h2>
+
+  <div class="summary-grid" style="margin-bottom:14px;">
+    <div class="summary-card">
+      <div class="summary-label">Pending review</div>
+      <div class="summary-value">{{ conductor_alerts_pending_review_count if conductor_alerts_pending_review_count is defined else 0 }}</div>
+      <div class="summary-note">Conductor uploads waiting for librarian review.</div>
+    </div>
+
+    <div class="summary-card">
+      <div class="summary-label">Forwarded</div>
+      <div class="summary-value">{{ conductor_alerts_forwarded_count if conductor_alerts_forwarded_count is defined else 0 }}</div>
+      <div class="summary-note">Uploads already pushed through authority flow.</div>
+    </div>
+
+    <div class="summary-card" style="grid-column: span 2;">
+      <div class="summary-label">Latest conductor upload</div>
+      {% if conductor_alerts_latest %}
+        <div class="summary-value" style="font-size:20px;">{{ conductor_alerts_latest["concert_name"] or "Unnamed concert" }}</div>
+        <div class="summary-note">
+          {% if conductor_alerts_latest["concert_ref"] %}Ref: {{ conductor_alerts_latest["concert_ref"] }} · {% endif %}
+          {{ conductor_alerts_latest["upload_filename"] or "No file name" }} ·
+          {{ conductor_alerts_latest["receipt_status"] or "idle" }} ·
+          {{ conductor_alerts_latest["forward_status"] or "idle" }}
+        </div>
+      {% else %}
+        <div class="summary-value" style="font-size:20px;">None</div>
+        <div class="summary-note">No conductor upload alerts yet.</div>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if conductor_alerts %}
+    <div class="monitor-wrap" style="max-height:320px;">
+      <table>
+        <thead>
+          <tr>
+            <th>Concert</th>
+            <th>File</th>
+            <th>Sent via</th>
+            <th>Receipt</th>
+            <th>Forward</th>
+            <th>When</th>
+            <th>Note</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for alert in conductor_alerts %}
+          <tr>
+            <td>
+              <div>{{ alert["concert_name"] or "Unnamed concert" }}</div>
+              <div class="concert-meta">{% if alert["concert_ref"] %}{{ alert["concert_ref"] }}{% else %}—{% endif %}</div>
+            </td>
+            <td>{{ alert["upload_filename"] or "—" }}</td>
+            <td>
+              {% if alert["submit_mode"] == "send_all" %}
+                Send to All
+              {% elif alert["submit_mode"] == "send_librarian" %}
+                Send to Librarian
+              {% else %}
+                {{ alert["submit_mode"] or "—" }}
+              {% endif %}
+            </td>
+            <td>{{ alert["receipt_status"] or "idle" }}</td>
+            <td>{{ alert["forward_status"] or "idle" }}</td>
+            <td>{{ alert["upload_timestamp"] or alert["created_at"] or "—" }}</td>
+            <td>{{ alert["message_note"] or "—" }}</td>
+            <td class="open-cell">
+              {% if (alert["receipt_status"] or "idle") == "pending librarian review" %}
+                <div style="display:flex; gap:8px; justify-content:flex-end; flex-wrap:wrap;">
+                  <form method="post" action="/librarian/conductor_alert/review" style="margin:0;">
+                    <input type="hidden" name="alert_id" value="{{ alert['id'] }}">
+                    <button type="submit" class="btn secondary">Mark Reviewed</button>
+                  </form>
+                  <form method="post" action="/librarian/conductor_alert/forward" style="margin:0;">
+                    <input type="hidden" name="alert_id" value="{{ alert['id'] }}">
+                    <button type="submit" class="btn">Forward</button>
+                  </form>
+                </div>
+              {% else %}
+                <span class="concert-meta">No action</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="empty">No conductor upload alerts yet.</div>
+  {% endif %}
+</div>
+
+<div class="panel">
+  <div style="display:flex; justify-content:space-between; align-items:center; gap:14px; margin-bottom:14px;">
+    <h2 style="margin:0;">Create Concert</h2>
+    <button class="btn" type="submit" form="create-concert-form">Create Concert</button>
+  </div>
+
+  <form method="post" action="/librarian/production/create" id="create-concert-form">
+<!-- ROW 1: dropdown selectors -->
+<div class="form-grid">
+
+  <div>
+    <label>Orchestra / Ensemble</label>
+    <select name="ensemble_select" onchange="toggleNewField(this,'ensemble_new')">
+      <option value="__new__">Add new orchestra…</option>
+      {% for x in ensembles %}
+      <option value="{{ x }}">{{ x }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div>
+    <label>Venue</label>
+    <select name="venue_select" onchange="toggleNewField(this,'venue_new')">
+      <option value="__new__">Add new venue…</option>
+      {% for x in venues %}
+      <option value="{{ x }}">{{ x }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div>
+    <label>Conductor</label>
+    <select name="conductor_select" onchange="toggleNewField(this,'conductor_new')">
+      <option value="__new__">Add new conductor…</option>
+      {% for x in conductors %}
+      <option value="{{ x }}">{{ x }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+</div>
+
+<!-- ROW 1b: new-entry inputs (only when needed) -->
+<div class="form-grid" style="margin-top:-6px;">
+
+  <div>
+    <input type="text" name="ensemble_new" id="ensemble_new"
+           placeholder="Enter orchestra name"
+           style="display:none;">
+  </div>
+
+  <div>
+    <input type="text" name="venue_new" id="venue_new"
+           placeholder="Enter venue"
+           style="display:none;">
+  </div>
+
+  <div>
+    <input type="text" name="conductor_new" id="conductor_new"
+           placeholder="Enter conductor name"
+           style="display:none;">
+  </div>
+
+</div>
+
+<!-- ROW 2: single-line inputs -->
+<div class="form-grid">
+
+  <div>
+    <label>Concert Title</label>
+    <input type="text" name="name" placeholder="e.g. Beethoven Symphony No.7" required>
+  </div>
+
+  <div>
+    <label>Date (NZ)</label>
+    <input type="text" name="concert_date" placeholder="DD-MM-YYYY or DD/MM/YYYY" required>
+  </div>
+
+  <div>
+    <label>Concert Tier</label>
+    <select name="concert_tier" required>
+      <option value="" selected disabled>Select tier…</option>
+      <option value="1">Tier 1 — 1–8 seats — $40</option>
+      <option value="2">Tier 2 — 9–16 seats — $60</option>
+      <option value="3">Tier 3 — 17–24 seats — $90</option>
+      <option value="4">Tier 4 — 25–32 seats — $130</option>
+      <option value="5">Tier 5 — 33–45 seats — $180</option>
+      <option value="6">Tier 6 — 46–60 seats — $240</option>
+      <option value="7">Tier 7 — 61–80 seats — $320</option>
+      <option value="8">Tier 8 — 81–100 seats — $380</option>
+      <option value="9">Tier 9 — 101–120 seats — $450</option>
+      <option value="10">Tier 10 — 121+ seats — $520</option>
+    </select>
+  </div>
+
+</div>
+
+<!-- removed tier note and confirmation requirement -->
+  </form>
+</div>
+
+<div class="panel">
+  <h2>Concert Monitoring Board</h2>
+
+  <div class="monitor-note">
+    Red should stand out at a glance. Clicking a red indicator will open the concert’s working view showing all musicians who have not opened the current material.
+  </div>
+
+  {% if concerts|length == 0 %}
+    <div class="empty">No concerts yet.</div>
+  {% else %}
+    <div class="monitor-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th class="concert-cell">Concert</th>
+            <th class="section-head">Strings</th>
+            <th class="section-head">Winds</th>
+            <th class="section-head">Brass</th>
+            <th class="section-head">Perc</th>
+            <th class="section-head">Voice</th>
+            <th class="section-head">Guests</th>
+            <th class="open-cell">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in concerts %}
+          {% set lights = lights_by_concert[p['id']] %}
+          <tr>
+            <td class="concert-cell">
+              <div class="concert-title">{{ p['name'] }} <span class="concert-meta">({{ p['concert_date_nz'] }})</span></div>
+              <div class="concert-meta">{{ p['ensemble'] }} · {{ p['venue'] }} · Conductor: {{ p['conductor'] }}</div>
+            </td>
+
+            {% for section_key in ['strings', 'winds', 'brass', 'percussion', 'voice', 'guests'] %}
+              {% set sec = lights.get(section_key) if lights is mapping else None %}
+              {% set sec_light = (sec['light'] if sec and sec['light'] is defined else 'red') %}
+              {% if section_key == 'percussion' %}
+                {% set section_slug = 'percussion' %}
+              {% else %}
+                {% set section_slug = section_key %}
+              {% endif %}
+              {% if sec_light == 'red' %}
+                {% set alert_href = '/librarian/concert/' ~ p['id'] ~ '/assign?focus_section=' ~ section_slug ~ '&highlight_unopened=1' %}
+              {% else %}
+                {% set alert_href = '/librarian/concert/' ~ p['id'] ~ '/assign?focus_section=' ~ section_slug %}
+              {% endif %}
+              <td class="light-cell">
+                <a
+                  class="light-link {% if sec_light == 'red' %}red{% endif %}"
+                  href="{{ alert_href }}"
+                  title="{{ section_slug|capitalize }} · {{ sec_light|capitalize }}"
+                >
+                 <span class="light-dot dot-{{ sec_light if sec_light in ['green', 'red', 'grey'] else 'red' }}"></span>
+                </a>
+              </td>
+            {% endfor %}
+
+            <td class="open-cell">
+              {% if (p['status'] or 'active') == 'postponed' %}
+                <a class="btn secondary" href="/librarian/postponed">Renew</a>
+              {% else %}
+                <a class="btn secondary" href="/librarian/concert/{{ p['id'] }}">Open</a>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endif %}
+</div>
+
+<div class="panel">
+  <h2>Recent Sends</h2>
+
+  {% if notify_logs %}
+    <div class="monitor-wrap" style="max-height:320px;">
+      <table>
+        <thead>
+          <tr>
+            <th>When</th>
+            <th>Concert</th>
+            <th>Type</th>
+            <th>Recipients</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in notify_logs %}
+          <tr>
+            <td>{{ r["created_at"] }}</td>
+            <td>{{ r["concert_name"] or "Unknown concert" }}</td>
+            <td>{{ r["target"] or "send" }}</td>
+            <td>{{ r["recipient_count"] or 0 }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="empty">No sends logged yet.</div>
+  {% endif %}
+</div>
+
+<script>
+function toggleNewField(select, fieldId) {
+  const field = document.getElementById(fieldId);
+
+  if (select.value === "__new__") {
+    field.style.display = "block";
+    field.required = true;
+  } else {
+    field.style.display = "none";
+    field.required = false;
+    field.value = "";
+  }
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  toggleNewField(document.querySelector('select[name="ensemble_select"]'), "ensemble_new");
+  toggleNewField(document.querySelector('select[name="venue_select"]'), "venue_new");
+  toggleNewField(document.querySelector('select[name="conductor_select"]'), "conductor_new");
+});
+</script>
+    </div>
+  </div>
+</div>
+</body>
+</html>

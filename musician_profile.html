@@ -1,0 +1,311 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Annotatio • Musician Profile</title>
+
+<style>
+
+body{
+    margin:0;
+    font-family: Georgia, "Times New Roman", serif;
+    background:#071018;
+    color:#f2f0ea;
+}
+
+.page{
+    max-width:900px;
+    margin:40px auto;
+    padding:20px;
+}
+
+.card{
+    background:#0b1622;
+    border:1px solid #223548;
+    border-radius:14px;
+    padding:44px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.35);
+}
+
+.header{
+    text-align:center;
+    margin-bottom:30px;
+}
+
+.header img{
+    width:420px;
+    max-width:80%;
+}
+
+.name{
+    font-size:34px;
+    margin-top:10px;
+    color:#74d3de;
+}
+
+.instrument{
+    font-size:20px;
+    color:#d5b06a;
+}
+
+.rule{
+    height:1px;
+    width:220px;
+    background:#b89457;
+    margin:18px auto 10px auto;
+}
+
+.top-actions{
+    margin-top:16px;
+    display:flex;
+    justify-content:center;
+    gap:12px;
+    flex-wrap:wrap;
+}
+
+.section{
+    margin-top:30px;
+}
+
+.section-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    margin-bottom:10px;
+    flex-wrap:wrap;
+}
+
+.section-title{
+    font-size:22px;
+    color:#74d3de;
+    margin:0;
+}
+
+.info-box{
+    background:#081423;
+    border:1px solid #2d4257;
+    border-radius:10px;
+    padding:18px 22px;
+}
+
+.tag{
+    display:inline-block;
+    padding:6px 12px;
+    border:1px solid #2d4257;
+    border-radius:20px;
+    margin:6px 6px 0 0;
+    background:#0d1b2b;
+}
+
+.action-button{
+    display:inline-block;
+    padding:8px 16px;
+    background:#173247;
+    border:1px solid #b89457;
+    border-radius:999px;
+    text-decoration:none;
+    color:#f2f0ea;
+}
+
+.details-grid{
+    display:grid;
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+    gap:18px 20px;
+}
+
+.detail-item{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+}
+
+.detail-item.full{
+    grid-column:1 / -1;
+}
+
+.detail-label{
+    color:#d5b06a;
+    font-size:15px;
+}
+
+.detail-value{
+    min-height:24px;
+    padding:12px 14px;
+    font-size:16px;
+    color:#f2f0ea;
+    background:#0d1b2b;
+    border:1px solid #2d4257;
+    border-radius:10px;
+    line-height:1.5;
+    box-sizing:border-box;
+    white-space:pre-wrap;
+}
+
+.helper{
+    color:#aeb7c2;
+    font-size:14px;
+}
+
+.notice{
+    margin:0 0 20px 0;
+    padding:12px 16px;
+    border:1px solid #4b8f63;
+    background:#0d1b2b;
+    border-radius:10px;
+    color:#d8f1df;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="page">
+<div class="card">
+
+<div class="header">
+
+<img src="/static/annotatio_logo.png">
+
+<div class="name">{{ musician.preferred_name or musician.name }}</div>
+
+<div class="instrument">
+    {{ musician.primary_instrument or "Instrument not yet set" }}
+    {% if musician.voice_type %}
+        • {{ musician.voice_type }}
+    {% endif %}
+    {% if musician.city %}
+        • {{ musician.city }}
+    {% endif %}
+    {% if musician.country_name or musician.country %}
+        • {{ musician.country_name or musician.country }}
+    {% endif %}
+</div>
+
+<div class="rule"></div>
+
+<div class="top-actions">
+<a class="action-button" href="/musician/profile/pdf">Export Profile PDF</a>
+<a class="action-button" href="/musician">Exit to My Hub</a>
+</div>
+
+</div>
+
+{% if request.query_params.get("saved") == "1" %}
+<div class="notice">Profile saved.</div>
+{% endif %}
+
+<div class="section">
+
+<div class="section-head">
+<h2 class="section-title">Personal Details</h2>
+<a class="action-button" href="/musician/edit_details">Edit Personal Details</a>
+</div>
+
+<div class="info-box">
+<div class="details-grid">
+
+<div class="detail-item">
+<div class="detail-label">Full name</div>
+<div class="detail-value">{{ musician.name or "—" }}</div>
+</div>
+
+<div class="detail-item">
+<div class="detail-label">Preferred name</div>
+<div class="detail-value">{{ musician.preferred_name or "—" }}</div>
+</div>
+
+<div class="detail-item">
+<div class="detail-label">Email</div>
+<div class="detail-value">{{ musician.email or user.email or "—" }}</div>
+<div class="helper">Email is used as your profile key and login identity.</div>
+</div>
+
+<div class="detail-item">
+<div class="detail-label">Mobile</div>
+<div class="detail-value">{{ musician.mobile or "—" }}</div>
+</div>
+
+<div class="detail-item">
+<div class="detail-label">City</div>
+<div class="detail-value">{{ musician.city or "—" }}</div>
+</div>
+
+<div class="detail-item">
+<div class="detail-label">Country</div>
+<div class="detail-value">{{ musician.country_name or musician.country or "—" }}</div>
+</div>
+
+<div class="detail-item full">
+<div class="detail-label">Notes for the Librarian</div>
+<div class="detail-value">{{ musician.notes or "—" }}</div>
+</div>
+
+</div>
+</div>
+
+</div>
+
+<div class="section">
+
+<div class="section-head">
+<h2 class="section-title">Instruments</h2>
+<a class="action-button" href="/musician/update_instruments">Edit Instruments</a>
+</div>
+
+<div class="info-box">
+
+<strong>Primary:</strong> {{ musician.primary_instrument or "—" }}
+
+{% if musician.voice_type %}
+<br><br>
+<strong>Voice type:</strong> {{ musician.voice_type }}
+{% endif %}
+
+<br><br>
+
+<strong>Doubling:</strong>
+
+<div>
+{% if musician.other_instruments %}
+  {% for item in musician.other_instruments.split(",") | sort %}
+    {% if item.strip() %}
+      <span class="tag">{{ item.strip() }}</span>
+    {% endif %}
+  {% endfor %}
+{% else %}
+  <span class="tag">None listed</span>
+{% endif %}
+</div>
+
+</div>
+
+</div>
+
+<div class="section">
+
+<div class="section-head">
+<h2 class="section-title">Orchestras & Ensembles</h2>
+<a class="action-button" href="/musician/add_ensemble">Edit Ensembles</a>
+</div>
+
+<div class="info-box">
+{% if musician.ensembles %}
+  {% for item in musician.ensembles.split(",") | sort %}
+    {% if item.strip() %}
+      <span class="tag">{{ item.strip() }}</span>
+    {% endif %}
+  {% endfor %}
+{% else %}
+  <span class="tag">None listed</span>
+{% endif %}
+</div>
+
+</div>
+
+</div>
+</div>
+
+</body>
+</html>
