@@ -1,1 +1,1 @@
-http://YOUR-REAL-HOST-IP:8000
+https://annotatio.onrender.com
