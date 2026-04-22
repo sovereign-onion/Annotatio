@@ -4,6 +4,7 @@
 # =====================================================================
 
 import sqlite3
+import shutil
 from pathlib import Path
 from fastapi import FastAPI, Request, Form, File, UploadFile
 from fastapi.responses import HTMLResponse, RedirectResponse
@@ -25,6 +26,29 @@ STATIC_DIR = APP_DIR / "static"
 
 TEMPLATES_DIR.mkdir(parents=True, exist_ok=True)
 STATIC_DIR.mkdir(parents=True, exist_ok=True)
+def annotatio_repo_bootstrap_files():
+    static_suffixes = {".png", ".jpg", ".jpeg", ".gif", ".svg", ".ico", ".mp3", ".wav", ".webp"}
+
+    for source in APP_DIR.iterdir():
+        if not source.is_file():
+            continue
+
+        if source.name == "app.py":
+            continue
+
+        if source.suffix.lower() == ".html":
+            target = TEMPLATES_DIR / source.name
+            if not target.exists():
+                shutil.copy2(source, target)
+            continue
+
+        if source.suffix.lower() in static_suffixes:
+            target = STATIC_DIR / source.name
+            if not target.exists():
+                shutil.copy2(source, target)
+
+
+annotatio_repo_bootstrap_files()
 
 templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
