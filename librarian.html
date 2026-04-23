@@ -573,11 +573,34 @@ tr:last-child td{
         </div>
 
         <div class="summary-card">
-          <div class="summary-label">Connected now</div>
-          <div class="summary-value">{{ connected_now_count if connected_now_count is defined else 0 }}</div>
-          <div class="summary-note">Users active in this session window.</div>
+  	  <div class="summary-label">Musicians Online Now</div>
+  	  <div class="summary-value">{{ connected_now_count if connected_now_count is defined else 0 }}</div>
+  	  <div class="summary-note">Connected sessions ready to receive updates.</div>
         </div>
       </div>
+
+<div class="panel">
+  <h2>Create Conductor Invite</h2>
+  <form method="post" action="/librarian/conductor_invite/create?email={{ user.email }}" style="display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end;">
+    <div style="flex:1 1 420px;">
+      <label for="conductor_email" style="display:block; margin-bottom:6px; color:#c8d0d8; font-size:14px;">Conductor email</label>
+      <input id="conductor_email" name="conductor_email" type="text" placeholder="conductor@email.com" required style="width:100%;">
+    </div>
+    <div>
+      <button class="btn" type="submit">Create Invite</button>
+    </div>
+  </form>
+</div>
+
+{% if conductor_invite_popup_active %}
+<div onclick="this.style.display='none';" style="position:fixed; inset:0; background:rgba(7,16,24,0.84); z-index:9999; display:flex; align-items:center; justify-content:center; padding:20px;">
+  <div onclick="event.stopPropagation();" style="background:#0b1622; border:1px solid #223548; border-radius:18px; padding:28px 26px; box-shadow:0 10px 30px rgba(0,0,0,0.35);">
+    <a href="{{ conductor_invite_popup_link }}" target="_blank" rel="noopener noreferrer" style="display:inline-block; text-decoration:none;">
+      <img src="/static/conductor_invite_gold.png" alt="Conductor Invite" style="display:block; width:220px; max-width:220px; height:auto; border:0; margin:0 auto;">
+    </a>
+  </div>
+</div>
+{% endif %}
 
 <div class="panel">
   <h2>Conductor Upload Alerts</h2>
