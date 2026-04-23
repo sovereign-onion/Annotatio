@@ -6,9 +6,10 @@
 import sqlite3
 import secrets
 import shutil
+from email.message import EmailMessage
 from pathlib import Path
 from fastapi import FastAPI, Request, Form, File, UploadFile
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from datetime import datetime, timedelta
@@ -3684,12 +3685,77 @@ def conductor_entry_invite_get_by_token(invite_token: str):
             conn.close()
 
 
+@app.get("/librarian/conductor_invite/draft")
+def librarian_conductor_invite_draft(request: Request):
+    invite_token = str(request.query_params.get("token") or "").strip()
+    invite_row = conductor_entry_invite_get_by_token(invite_token)
+
+    if not invite_row:
+        return HTMLResponse("Invite not found.", status_code=404)
+
+    if str(invite_row["status"] or "").strip().lower() != "active":
+        return HTMLResponse("Invite is no longer active.", status_code=403)
+
+    conductor_email = str(invite_row["conductor_email"] or "").strip().lower()
+    if not conductor_email:
+        return HTMLResponse("Invite email missing.", status_code=400)
+
+    base_url = str(request.base_url).rstrip("/")
+    entry_url = f"{base_url}/entry?token={quote_plus(invite_token)}"
+    seal_url = f"{base_url}/static/conductor_invite_gold.png"
+
+    html_body = f"""\
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Annotatio Conductor Invite</title>
+</head>
+<body style="margin:0; padding:0; background:#071018;">
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="width:100%; background:#071018; margin:0; padding:0;">
+  <tr>
+    <td align="center" style="padding:40px 20px;">
+      <table role="presentation" width="520" cellspacing="0" cellpadding="0" border="0" style="width:520px; max-width:520px; background:#071018; border-collapse:collapse;">
+        <tr>
+          <td align="center" style="padding:40px 0;">
+            <a href="{entry_url}" style="display:inline-block; text-decoration:none;">
+              <img src="{seal_url}" alt="Annotatio Conductor Invite" width="220" style="display:block; width:220px; max-width:220px; height:auto; border:0; margin:0 auto;">
+            </a>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+</body>
+</html>
+"""
+
+    message = EmailMessage()
+    message["Subject"] = "Annotatio Conductor Invite"
+    message["To"] = conductor_email
+    message["X-Unsent"] = "1"
+    message.set_content(entry_url)
+    message.add_alternative(html_body, subtype="html")
+
+    filename = f"annotatio_conductor_invite_{conductor_email.replace('@', '_at_')}.eml"
+    return Response(
+        content=message.as_bytes(),
+        media_type="message/rfc822",
+        headers={
+            "Content-Disposition": f'attachment; filename="{filename}"'
+        },
+    )
+
+
 def librarian_conductor_invite_popup_payload(request: Request) -> dict:
     invite_token = str(request.query_params.get("conductor_invite_token") or "").strip()
     if not invite_token:
         return {
             "conductor_invite_popup_active": False,
             "conductor_invite_popup_link": "",
+            "conductor_invite_popup_image_url": "",
+            "conductor_invite_popup_draft_url": "",
         }
 
     invite_row = conductor_entry_invite_get_by_token(invite_token)
@@ -3697,12 +3763,16 @@ def librarian_conductor_invite_popup_payload(request: Request) -> dict:
         return {
             "conductor_invite_popup_active": False,
             "conductor_invite_popup_link": "",
+            "conductor_invite_popup_image_url": "",
+            "conductor_invite_popup_draft_url": "",
         }
 
     base_url = str(request.base_url).rstrip("/")
     return {
         "conductor_invite_popup_active": True,
         "conductor_invite_popup_link": f"{base_url}/entry?token={quote_plus(invite_token)}",
+        "conductor_invite_popup_image_url": f"{base_url}/static/conductor_invite_gold.png",
+        "conductor_invite_popup_draft_url": f"{base_url}/librarian/conductor_invite/draft?token={quote_plus(invite_token)}",
     }
 
 
@@ -3852,6 +3922,8 @@ def librarian_home_page(request: Request):
             "conductor_alerts_forwarded_count": concert_control_conductor_alerts_forwarded_count(),
             "conductor_invite_popup_active": popup_payload["conductor_invite_popup_active"],
             "conductor_invite_popup_link": popup_payload["conductor_invite_popup_link"],
+            "conductor_invite_popup_image_url": popup_payload["conductor_invite_popup_image_url"],
+            "conductor_invite_popup_draft_url": popup_payload["conductor_invite_popup_draft_url"],
         },
     )
 
