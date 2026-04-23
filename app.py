@@ -4,7 +4,7 @@
 # =====================================================================
 
 import sqlite3
-import shutil
+import secrets
 from pathlib import Path
 from fastapi import FastAPI, Request, Form, File, UploadFile
 from fastapi.responses import HTMLResponse, RedirectResponse
@@ -670,6 +670,44 @@ def init_db():
         cur.execute("ALTER TABLE conductor_profiles ADD COLUMN updated_at TEXT")
 
     cur.execute("""
+    CREATE TABLE IF NOT EXISTS conductor_entry_invites (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        librarian_email TEXT NOT NULL,
+        conductor_email TEXT NOT NULL,
+        invite_token TEXT NOT NULL UNIQUE,
+        status TEXT NOT NULL DEFAULT 'active',
+        created_at TEXT NOT NULL,
+        used_at TEXT
+    )
+    """)
+
+    cur.execute("PRAGMA table_info(conductor_entry_invites)")
+    conductor_entry_invite_cols = {row["name"] for row in cur.fetchall()}
+
+    if "librarian_email" not in conductor_entry_invite_cols:
+        cur.execute("ALTER TABLE conductor_entry_invites ADD COLUMN librarian_email TEXT")
+
+    if "conductor_email" not in conductor_entry_invite_cols:
+        cur.execute("ALTER TABLE conductor_entry_invites ADD COLUMN conductor_email TEXT")
+
+    if "invite_token" not in conductor_entry_invite_cols:
+        cur.execute("ALTER TABLE conductor_entry_invites ADD COLUMN invite_token TEXT")
+
+    if "status" not in conductor_entry_invite_cols:
+        cur.execute("ALTER TABLE conductor_entry_invites ADD COLUMN status TEXT NOT NULL DEFAULT 'active'")
+
+    if "created_at" not in conductor_entry_invite_cols:
+        cur.execute("ALTER TABLE conductor_entry_invites ADD COLUMN created_at TEXT")
+
+    if "used_at" not in conductor_entry_invite_cols:
+        cur.execute("ALTER TABLE conductor_entry_invites ADD COLUMN used_at TEXT")
+
+    cur.execute("""
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_conductor_entry_invites_token
+    ON conductor_entry_invites(invite_token)
+    """)
+
+    cur.execute("""
     CREATE TABLE IF NOT EXISTS librarian_notes_entries (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         librarian_email TEXT NOT NULL,
@@ -677,7 +715,6 @@ def init_db():
         created_at TEXT NOT NULL
     )
     """)
-
     cur.execute("PRAGMA table_info(librarian_notes_entries)")
     librarian_notes_cols = {row["name"] for row in cur.fetchall()}
 
@@ -2864,6 +2901,7 @@ def home_page(request: Request):
     ensemble_names = librarian_dashboard_ensemble_names(librarian_email)
     conductor_names = librarian_dashboard_conductor_names(librarian_email)
     traffic_snapshot = librarian_dashboard_concert_summary_fetch_snapshot()
+    popup_payload = librarian_conductor_invite_popup_payload(request)
 
     return templates.TemplateResponse(
         "librarian.html",
@@ -2886,9 +2924,10 @@ def home_page(request: Request):
             "conductor_alerts_latest": concert_control_conductor_alerts_latest(),
             "conductor_alerts_pending_review_count": concert_control_conductor_alerts_pending_review_count(),
             "conductor_alerts_forwarded_count": concert_control_conductor_alerts_forwarded_count(),
+            "conductor_invite_popup_active": popup_payload["conductor_invite_popup_active"],
+            "conductor_invite_popup_link": popup_payload["conductor_invite_popup_link"],
         },
     )
-
 
 @app.get("/librarian/invite", response_class=HTMLResponse)
 def librarian_invite_page(request: Request):
@@ -3262,12 +3301,14 @@ def librarian_setup_submit(
 @app.get("/conductor_setup", response_class=HTMLResponse)
 def conductor_setup_page(request: Request):
     invited_email = str(request.query_params.get("email") or "").strip().lower()
+    invite_token = str(request.query_params.get("invite_token") or "").strip()
     error = str(request.query_params.get("error") or "").strip().lower()
 
     error_map = {
         "missing_email": "Email address is required.",
         "email_mismatch": "The confirmed email must match the invitation email.",
         "missing_name": "Full name is required.",
+        "invalid_invite": "This invite is not valid for conductor setup.",
     }
     error_html = ""
     if error in error_map:
@@ -3301,7 +3342,7 @@ def conductor_setup_page(request: Request):
 
                     {error_html}
 
-                    <form method="post" action="/conductor_setup?email={quote_plus(invited_email)}">
+                    <form method="post" action="/conductor_setup?email={quote_plus(invited_email)}{f'&invite_token={quote_plus(invite_token)}' if invite_token else ''}">
                         <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px 16px;">
                             <div>
                                 <label for="full_name" style="display:block; margin-bottom:8px; color:#e5dccb;">Full name</label>
@@ -3376,6 +3417,7 @@ def conductor_setup_submit(
     country_name: str = Form(""),
 ):
     invited_email = " ".join(str(request.query_params.get("email") or "").strip().split()).lower()
+    invite_token = " ".join(str(request.query_params.get("invite_token") or "").strip().split())
     submitted_email = " ".join(str(confirm_email or "").strip().split()).lower()
     clean_full_name = " ".join(str(full_name or "").strip().split())
     clean_preferred_name = " ".join(str(preferred_name or "").strip().split())
@@ -3386,7 +3428,7 @@ def conductor_setup_submit(
     clean_state = " ".join(str(state_region_territory or "").strip().split())
     clean_country_name = " ".join(str(country_name or "").strip().split())
     now = datetime.utcnow().isoformat()
-
+    
     if not submitted_email:
         return RedirectResponse(
             f"/conductor_setup?email={quote_plus(invited_email)}&error=missing_email",
@@ -3401,9 +3443,29 @@ def conductor_setup_submit(
 
     if not clean_full_name:
         return RedirectResponse(
-            f"/conductor_setup?email={quote_plus(submitted_email)}&error=missing_name",
+            f"/conductor_setup?email={quote_plus(submitted_email)}{f'&invite_token={quote_plus(invite_token)}' if invite_token else ''}&error=missing_name",
             status_code=303,
         )
+
+    if invite_token:
+        invite_row = conductor_entry_invite_get_by_token(invite_token)
+        if not invite_row:
+            return RedirectResponse(
+                f"/conductor_setup?email={quote_plus(invited_email or submitted_email)}&error=invalid_invite",
+                status_code=303,
+            )
+
+        if str(invite_row["status"] or "").strip().lower() != "active":
+            return RedirectResponse(
+                f"/conductor_setup?email={quote_plus(invited_email or submitted_email)}&error=invalid_invite",
+                status_code=303,
+            )
+
+        if str(invite_row["conductor_email"] or "").strip().lower() != submitted_email:
+            return RedirectResponse(
+                f"/conductor_setup?email={quote_plus(str(invite_row['conductor_email'] or '').strip().lower())}&error=email_mismatch",
+                status_code=303,
+            )
 
     conn = None
     try:
@@ -3490,6 +3552,17 @@ def conductor_setup_submit(
             now,
         ))
 
+        if invite_token:
+            cur.execute("""
+            UPDATE conductor_entry_invites
+            SET status='used',
+                used_at=?
+            WHERE invite_token=?
+            """, (
+                now,
+                invite_token,
+            ))
+
         conn.commit()
     finally:
         if conn is not None:
@@ -3538,7 +3611,7 @@ def conductor_invite_page(request: Request):
     if not email:
         return HTMLResponse("Conductor email missing.", status_code=400)
 
-    base_url = annotatio_invite_host_base_url(request)
+    base_url = str(request.base_url).rstrip("/")
     invite_url = f"{base_url}/conductor_shortcut?email={quote_plus(email)}"
     static_base_url = f"{base_url}/static"
 
@@ -3550,8 +3623,151 @@ def conductor_invite_page(request: Request):
             "conductor_email": email,
             "invite_url": invite_url,
             "static_base_url": static_base_url,
-            "invite_host_base_url": base_url,
         },
+    )
+
+
+def conductor_entry_invite_create(
+    librarian_email: str,
+    conductor_email: str,
+) -> str:
+    clean_librarian_email = str(librarian_email or "").strip().lower()
+    clean_conductor_email = str(conductor_email or "").strip().lower()
+    invite_token = secrets.token_urlsafe(24)
+    now = datetime.utcnow().isoformat()
+
+    conn = None
+    try:
+        conn = db()
+        cur = conn.cursor()
+        cur.execute("""
+        INSERT INTO conductor_entry_invites (
+            librarian_email,
+            conductor_email,
+            invite_token,
+            status,
+            created_at,
+            used_at
+        ) VALUES (?, ?, ?, 'active', ?, NULL)
+        """, (
+            clean_librarian_email,
+            clean_conductor_email,
+            invite_token,
+            now,
+        ))
+        conn.commit()
+        return invite_token
+    finally:
+        if conn is not None:
+            conn.close()
+
+
+def conductor_entry_invite_get_by_token(invite_token: str):
+    clean_token = str(invite_token or "").strip()
+    if not clean_token:
+        return None
+
+    conn = None
+    try:
+        conn = db()
+        cur = conn.cursor()
+        cur.execute("""
+        SELECT *
+        FROM conductor_entry_invites
+        WHERE invite_token=?
+        LIMIT 1
+        """, (clean_token,))
+        return cur.fetchone()
+    finally:
+        if conn is not None:
+            conn.close()
+
+
+def librarian_conductor_invite_popup_payload(request: Request) -> dict:
+    invite_token = str(request.query_params.get("conductor_invite_token") or "").strip()
+    if not invite_token:
+        return {
+            "conductor_invite_popup_active": False,
+            "conductor_invite_popup_link": "",
+        }
+
+    invite_row = conductor_entry_invite_get_by_token(invite_token)
+    if not invite_row:
+        return {
+            "conductor_invite_popup_active": False,
+            "conductor_invite_popup_link": "",
+        }
+
+    base_url = str(request.base_url).rstrip("/")
+    return {
+        "conductor_invite_popup_active": True,
+        "conductor_invite_popup_link": f"{base_url}/entry?token={quote_plus(invite_token)}",
+    }
+
+
+@app.post("/librarian/conductor_invite/create")
+def librarian_conductor_invite_create(
+    request: Request,
+    conductor_email: str = Form(...),
+):
+    librarian_email = librarian_route_get_email_from_request(request) or "librarian@local"
+    clean_conductor_email = str(conductor_email or "").strip().lower()
+
+    if not clean_conductor_email:
+        return RedirectResponse(
+            f"/librarian?email={quote_plus(librarian_email)}",
+            status_code=303,
+        )
+
+    invite_token = conductor_entry_invite_create(
+        librarian_email=librarian_email,
+        conductor_email=clean_conductor_email,
+    )
+
+    return RedirectResponse(
+        f"/librarian?email={quote_plus(librarian_email)}&conductor_invite_token={quote_plus(invite_token)}",
+        status_code=303,
+    )
+
+
+@app.get("/entry")
+def annotatio_global_entry(request: Request):
+    invite_token = str(request.query_params.get("token") or "").strip()
+    invite_row = conductor_entry_invite_get_by_token(invite_token)
+
+    if not invite_row:
+        return HTMLResponse("Invite not found.", status_code=404)
+
+    if str(invite_row["status"] or "").strip().lower() != "active":
+        return HTMLResponse("Invite is no longer active.", status_code=403)
+
+    conductor_email = str(invite_row["conductor_email"] or "").strip().lower()
+    if not conductor_email:
+        return HTMLResponse("Invite email missing.", status_code=400)
+
+    conn = None
+    try:
+        conn = db()
+        cur = conn.cursor()
+        cur.execute("""
+        SELECT id
+        FROM users
+        WHERE lower(email)=lower(?)
+          AND role='conductor'
+        LIMIT 1
+        """, (conductor_email,))
+        if cur.fetchone():
+            return RedirectResponse(
+                f"/conductor?email={quote_plus(conductor_email)}",
+                status_code=303,
+            )
+    finally:
+        if conn is not None:
+            conn.close()
+
+    return RedirectResponse(
+        f"/conductor_setup?email={quote_plus(conductor_email)}&invite_token={quote_plus(invite_token)}",
+        status_code=303,
     )
 
 
@@ -3565,7 +3781,7 @@ def musician_invite_page(request: Request):
     if not email:
         return HTMLResponse("Musician email missing.", status_code=400)
 
-    base_url = annotatio_invite_host_base_url(request)
+    base_url = str(request.base_url).rstrip("/")
     invite_url = f"{base_url}/musician_setup?email={quote_plus(email)}"
     static_base_url = f"{base_url}/static"
 
@@ -3576,7 +3792,6 @@ def musician_invite_page(request: Request):
             "user": {"email": email},
             "invite_url": invite_url,
             "static_base_url": static_base_url,
-            "invite_host_base_url": base_url,
         },
     )
 
@@ -3611,6 +3826,7 @@ def librarian_home_page(request: Request):
     ensemble_names = librarian_dashboard_ensemble_names(email)
     conductor_names = librarian_dashboard_conductor_names(email)
     traffic_snapshot = librarian_dashboard_concert_summary_fetch_snapshot()
+    popup_payload = librarian_conductor_invite_popup_payload(request)
 
     return templates.TemplateResponse(
         "librarian.html",
@@ -3633,6 +3849,8 @@ def librarian_home_page(request: Request):
             "conductor_alerts_latest": concert_control_conductor_alerts_latest(),
             "conductor_alerts_pending_review_count": concert_control_conductor_alerts_pending_review_count(),
             "conductor_alerts_forwarded_count": concert_control_conductor_alerts_forwarded_count(),
+            "conductor_invite_popup_active": popup_payload["conductor_invite_popup_active"],
+            "conductor_invite_popup_link": popup_payload["conductor_invite_popup_link"],
         },
     )
 
