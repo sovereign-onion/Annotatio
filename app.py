@@ -5,6 +5,7 @@
 
 import sqlite3
 import secrets
+import shutil
 from pathlib import Path
 from fastapi import FastAPI, Request, Form, File, UploadFile
 from fastapi.responses import HTMLResponse, RedirectResponse
